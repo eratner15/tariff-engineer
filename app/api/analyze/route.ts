@@ -96,6 +96,11 @@ OUTPUT FORMAT (JSON):
 
 Be precise, practical, and legally defensible. These recommendations will go to real importers.`
 
+    // TypeScript guard: anthropic should never be null here because of USE_MOCK_MODE check above
+    if (!anthropic) {
+      return NextResponse.json({ error: 'API configuration error' }, { status: 500 })
+    }
+
     const message = await anthropic.messages.create({
       model: 'claude-3-5-sonnet-20241022',
       max_tokens: 4096,
