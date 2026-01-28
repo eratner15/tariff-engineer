@@ -20,12 +20,13 @@ Vercel is the fastest way to get this live. Takes ~2 minutes.
 #### 1. Push to GitHub
 
 ```bash
-# Create a new repository on GitHub (don't initialize with README)
-# Then run:
+# Already done! Your repo is at:
+# https://github.com/eratner15/tariff-engineer
 
-git remote add origin https://github.com/YOUR_USERNAME/tariff-engineer.git
-git branch -M main
-git push -u origin main
+# To update after changes:
+git add .
+git commit -m "Your changes"
+git push
 ```
 
 #### 2. Import to Vercel

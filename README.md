@@ -59,7 +59,7 @@ Add an Anthropic API key to get real Claude AI analysis of any product against t
 
 ```bash
 # Clone and install
-git clone https://github.com/YOUR_USERNAME/tariff-engineer.git
+git clone https://github.com/eratner15/tariff-engineer.git
 cd tariff-engineer
 npm install
 
