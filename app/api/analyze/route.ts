@@ -1,8 +1,11 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { NextRequest, NextResponse } from 'next/server'
 import { RULINGS } from '@/lib/data/rulings'
+import { getMockAnalysis } from '@/lib/mock-analysis'
 
-const anthropic = new Anthropic({
+const USE_MOCK_MODE = !process.env.ANTHROPIC_API_KEY
+
+const anthropic = USE_MOCK_MODE ? null : new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY || '',
 })
 
@@ -12,6 +15,15 @@ export async function POST(req: NextRequest) {
 
     if (!description) {
       return NextResponse.json({ error: 'Product description is required' }, { status: 400 })
+    }
+
+    // Use mock analysis if no API key is set (demo mode)
+    if (USE_MOCK_MODE) {
+      console.log('Using mock analysis mode (no API key set)')
+      // Simulate API delay for realistic feel
+      await new Promise(resolve => setTimeout(resolve, 1500))
+      const mockResult = getMockAnalysis(description)
+      return NextResponse.json(mockResult)
     }
 
     // Prepare rulings context for Claude

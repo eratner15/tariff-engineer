@@ -1,13 +1,19 @@
 # Deployment Guide
 
+## ⚡ The app works immediately without an API key!
+
+The app has two modes:
+- **Demo Mode:** Works instantly with smart mock data (no API key needed)
+- **AI Mode:** Add Anthropic API key for real Claude AI analysis
+
 ## Quick Deploy to Vercel (Recommended)
 
-Vercel is the fastest way to get this live. Takes ~3 minutes.
+Vercel is the fastest way to get this live. Takes ~2 minutes.
 
 ### Prerequisites
 - GitHub account
 - Vercel account (free tier is fine)
-- Anthropic API key
+- **Optional:** Anthropic API key (only needed for AI mode)
 
 ### Steps
 
@@ -27,30 +33,27 @@ git push -u origin main
 1. Go to [vercel.com/new](https://vercel.com/new)
 2. Click "Import Git Repository"
 3. Select your `tariff-engineer` repository
-4. **Don't click Deploy yet!**
+4. Click **Deploy** (yes, that's it!)
 
-#### 3. Add Environment Variable
+#### 3. (Optional) Add API Key for AI Mode
 
-In the Vercel import screen:
+**The app works without this step!** Only add if you want real Claude AI analysis:
 
-1. Click "Environment Variables"
-2. Add:
+1. Go to your Vercel project dashboard
+2. Settings → Environment Variables
+3. Add:
    - **Name:** `ANTHROPIC_API_KEY`
-   - **Value:** Your Anthropic API key (starts with `sk-ant-`)
-3. Now click **Deploy**
+   - **Value:** Your Anthropic API key from [console.anthropic.com](https://console.anthropic.com/)
+4. Redeploy (Deployments → three dots → Redeploy)
 
-#### 4. Wait ~2 minutes
-
-Vercel will:
-- Install dependencies
-- Build the Next.js app
-- Deploy to a production URL
-
-#### 5. Share the URL
+#### 4. Share the URL
 
 You'll get a URL like: `https://tariff-engineer-abc123.vercel.app`
 
 **This is your demo link for VCs.**
+
+**Without API key:** Runs in demo mode with category-specific mock results
+**With API key:** Full Claude AI analysis of any product
 
 ---
 

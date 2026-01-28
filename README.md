@@ -35,59 +35,86 @@ Built with Claude Code in one session. From concept to working prototype.
 - **Data:** Curated database of real CBP rulings
 - **Design:** Jony Ive minimalism (SF Pro Display, radical whitespace, pill buttons)
 
-## Setup
+## Two Modes
 
-### Prerequisites
+### 🎭 Demo Mode (No API Key Required)
+The app works immediately without any setup. It uses intelligent mock data based on product categories:
+- Footwear → Real footwear engineering strategies
+- Electronics → Real electronics strategies
+- Bags → Real bag strategies
+- Wearables → Real wearable strategies
 
-- Node.js 18+ (or 20+ for optimal Next.js support)
-- Anthropic API key ([get one here](https://console.anthropic.com/))
+Perfect for:
+- Testing the UI/UX
+- Showing demos to VCs
+- Understanding what the tool does
+- Previewing before adding API key
 
-### Installation
+### 🤖 AI Mode (Requires Anthropic API Key)
+Add an Anthropic API key to get real Claude AI analysis of any product against the full rulings database.
+
+## Quick Start
+
+### Option 1: Run Locally (Immediate, No Setup)
 
 ```bash
-# Clone the repo
-git clone [your-repo-url]
+# Clone and install
+git clone https://github.com/YOUR_USERNAME/tariff-engineer.git
 cd tariff-engineer
-
-# Install dependencies
 npm install
 
-# Set up environment variables
-cp .env.example .env.local
-# Edit .env.local and add your ANTHROPIC_API_KEY
-```
-
-### Environment Variables
-
-Create `.env.local`:
-
-```env
-ANTHROPIC_API_KEY=sk-ant-xxxxx
-```
-
-### Run Development Server
-
-```bash
+# Run (works immediately in demo mode)
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000)
+Open [http://localhost:3000](http://localhost:3000) - it just works!
 
-### Build for Production
+### Option 2: Deploy to Vercel (Recommended for Production)
 
-```bash
-npm run build
-npm start
+1. Fork this repo on GitHub
+2. Go to [vercel.com/new](https://vercel.com/new)
+3. Import your forked repo
+4. **Optional:** Add environment variable for AI mode:
+   - Name: `ANTHROPIC_API_KEY`
+   - Value: Your Anthropic API key from [console.anthropic.com](https://console.anthropic.com/)
+5. Deploy!
+
+**Without API key:** Works in demo mode with smart mock data
+**With API key:** Full Claude AI analysis of any product
+
+### Option 3: Deploy to Netlify
+
+1. Fork this repo on GitHub
+2. Go to [netlify.com](https://netlify.com)
+3. Import repository
+4. Build settings:
+   - Build command: `npm run build`
+   - Publish directory: `.next`
+5. **Optional:** Add `ANTHROPIC_API_KEY` environment variable
+6. Deploy!
+
+## How the Two Modes Work
+
+The app automatically detects whether an API key is present:
+
+```typescript
+// No ANTHROPIC_API_KEY set → Demo mode with smart mock data
+// ANTHROPIC_API_KEY set → Real Claude AI analysis
+
+const USE_MOCK_MODE = !process.env.ANTHROPIC_API_KEY
 ```
 
-## Deploy to Vercel
+**Demo mode provides:**
+- Category-specific mock results (footwear, electronics, bags, wearables)
+- Real CBP ruling references
+- Realistic savings calculations
+- Same beautiful UI
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/yourusername/tariff-engineer)
-
-1. Push to GitHub
-2. Import to Vercel
-3. Add `ANTHROPIC_API_KEY` environment variable
-4. Deploy
+**AI mode provides:**
+- Claude 3.5 Sonnet analysis
+- Custom analysis for any product description
+- Reasoning based on 15+ curated real CBP rulings
+- Confidence scoring based on precedent strength
 
 ## How It Works
 
