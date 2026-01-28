@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { motion } from 'framer-motion'
+import { motion, useMotionValue, useTransform, animate } from 'framer-motion'
 import { AnimatedCounter } from '@/components/AnimatedCounter'
 
 interface Opportunity {
@@ -32,10 +32,29 @@ interface AnalysisResult {
   totalPotentialSavings: number
 }
 
+function MoneyLossCounter({ dailyLoss }: { dailyLoss: number }) {
+  const [seconds, setSeconds] = useState(0)
+  const lossPerSecond = dailyLoss / (24 * 60 * 60)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSeconds(s => s + 1)
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [])
+
+  const currentLoss = seconds * lossPerSecond
+
+  return (
+    <span className="font-mono">
+      ${currentLoss.toFixed(2)}
+    </span>
+  )
+}
+
 export default function ResultsPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
-  const [analyzing, setAnalyzing] = useState(true)
   const [result, setResult] = useState<AnalysisResult | null>(null)
 
   useEffect(() => {
@@ -45,30 +64,18 @@ export default function ResultsPage() {
       return
     }
 
-    // Call the real analysis API
     const fetchAnalysis = async () => {
       try {
-        // Show analyzing animation
-        setTimeout(() => setAnalyzing(false), 1200)
-
         const response = await fetch('/api/analyze', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ description }),
         })
 
-        if (!response.ok) {
-          throw new Error('Analysis failed')
-        }
+        if (!response.ok) throw new Error('Analysis failed')
 
         const data = await response.json()
-
-        setResult({
-          product: description,
-          ...data
-        })
+        setResult({ product: description, ...data })
       } catch (error) {
         console.error('Analysis error:', error)
         alert('Analysis failed. Please try again.')
@@ -83,299 +90,313 @@ export default function ResultsPage() {
 
   if (loading || !result) {
     return (
-      <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 flex items-center justify-center">
+      <main className="min-h-screen bg-gradient-to-br from-red-500 via-red-600 to-red-700 flex items-center justify-center">
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="text-center max-w-2xl"
+          initial={{ scale: 0.5, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="text-center text-white"
         >
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-            className="inline-block mb-8"
-          >
-            <div className="w-20 h-20 border-4 border-apple-blue border-t-transparent rounded-full"></div>
-          </motion.div>
-
-          {analyzing ? (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-            >
-              <h2 className="text-3xl font-bold mb-4">Analyzing your product...</h2>
-              <p className="text-xl text-gray-600 mb-8">Searching 10,000+ CBP rulings</p>
-              <div className="space-y-2 text-sm text-gray-500 font-mono">
-                <motion.p
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: [0, 1, 0] }}
-                  transition={{ duration: 1, repeat: Infinity }}
-                >
-                  → Scanning NY N293844... ✓
-                </motion.p>
-                <motion.p
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: [0, 1, 0] }}
-                  transition={{ duration: 1, delay: 0.3, repeat: Infinity }}
-                >
-                  → Analyzing HQ H301842... ✓
-                </motion.p>
-                <motion.p
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: [0, 1, 0] }}
-                  transition={{ duration: 1, delay: 0.6, repeat: Infinity }}
-                >
-                  → Checking material thresholds... ✓
-                </motion.p>
-              </div>
-            </motion.div>
-          ) : (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
-              <h2 className="text-3xl font-bold mb-4">Found opportunities!</h2>
-              <p className="text-xl text-gray-600">Preparing your results...</p>
-            </motion.div>
-          )}
+          <div className="text-8xl mb-8">💸</div>
+          <h1 className="text-6xl font-bold mb-6">Calculating your losses...</h1>
+          <div className="w-20 h-20 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto"></div>
         </motion.div>
       </main>
     )
   }
 
-  const getConfidenceColor = (confidence: Opportunity['confidence']) => {
-    switch (confidence) {
-      case 'High': return 'bg-green-500 text-white'
-      case 'Medium': return 'bg-yellow-500 text-white'
-      case 'Low': return 'bg-gray-400 text-white'
-    }
+  const dailyLoss = result.totalPotentialSavings / 365
+  const monthlyLoss = result.totalPotentialSavings / 12
+  const perUnitAverage = result.opportunities[0]?.savings.perUnit || 0
+
+  // Real-world comparisons
+  const getComparison = (amount: number) => {
+    if (amount >= 300000) return { item: 'Tesla Model S', emoji: '🚗', count: Math.floor(amount / 100000) }
+    if (amount >= 150000) return { item: 'senior engineer salaries', emoji: '👨‍💻', count: Math.floor(amount / 150000) }
+    if (amount >= 50000) return { item: 'junior engineer salaries', emoji: '💼', count: Math.floor(amount / 50000) }
+    return { item: 'MacBook Pros', emoji: '💻', count: Math.floor(amount / 3000) }
   }
 
-  const getConfidenceBorder = (confidence: Opportunity['confidence']) => {
-    switch (confidence) {
-      case 'High': return 'border-green-200'
-      case 'Medium': return 'border-yellow-200'
-      case 'Low': return 'border-gray-200'
-    }
-  }
+  const comparison = getComparison(result.totalPotentialSavings)
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-white to-gray-50">
-      {/* Header */}
-      <div className="border-b border-gray-200 bg-white/80 backdrop-blur-sm sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-8 py-6 flex items-center justify-between">
-          <button
-            onClick={() => router.push('/')}
-            className="text-apple-blue hover:text-blue-700 text-sm font-semibold flex items-center gap-2 transition-colors"
+    <main className="min-h-screen bg-black">
+      {/* STOP LOSING MONEY Section */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="bg-gradient-to-br from-red-600 via-red-700 to-red-900 text-white py-20"
+      >
+        <div className="max-w-6xl mx-auto px-8 text-center">
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: 'spring', stiffness: 200, delay: 0.2 }}
+            className="text-9xl mb-8"
           >
-            ← New analysis
-          </button>
-          <h1 className="text-2xl font-bold">Tariff Engineer</h1>
-          <div className="w-28"></div>
-        </div>
-      </div>
+            🚨
+          </motion.div>
 
-      <div className="max-w-6xl mx-auto px-8 py-12">
-        {/* Product Summary */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-12"
-        >
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Your product</h2>
-          <p className="text-2xl text-gray-900 mb-8 leading-relaxed">{result.product}</p>
+          <motion.h1
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="text-7xl md:text-8xl font-black mb-6 uppercase tracking-tight"
+          >
+            STOP LOSING MONEY
+          </motion.h1>
+
+          <motion.p
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.6 }}
+            className="text-3xl mb-12 opacity-90"
+          >
+            You've been overpaying on every single unit
+          </motion.p>
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2 }}
-            className="bg-gradient-to-br from-red-50 to-red-100 border-2 border-red-200 rounded-3xl p-8"
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.8 }}
+            className="bg-black/30 backdrop-blur-sm rounded-3xl p-12 border-4 border-white/20"
           >
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-2">
-                  <span className="text-2xl">⚠️</span>
-                  <h3 className="text-lg font-semibold text-red-900">Current classification</h3>
-                </div>
-                <p className="text-4xl font-bold text-red-600 mb-3">
-                  HTS {result.currentClassification.hts} — {result.currentClassification.rate} duty
-                </p>
-                <p className="text-base text-red-800">{result.currentClassification.description}</p>
-              </div>
+            <p className="text-2xl mb-4 opacity-90">Money lost since you opened this page:</p>
+            <div className="text-8xl font-black mb-4 text-yellow-300">
+              <MoneyLossCounter dailyLoss={dailyLoss} />
             </div>
+            <p className="text-xl opacity-75">
+              That's <span className="font-bold">${dailyLoss.toFixed(2)}/day</span> • <span className="font-bold">${(monthlyLoss).toFixed(0)}/month</span> • <span className="font-bold">${result.totalPotentialSavings.toLocaleString()}/year</span>
+            </p>
           </motion.div>
-        </motion.div>
+        </div>
+      </motion.div>
 
-        {/* Big Opportunity Banner */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="mb-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-3xl p-12 text-white shadow-2xl"
-        >
-          <div className="text-center">
+      {/* THE FLIP - Savings Opportunity */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.0 }}
+        className="bg-gradient-to-br from-green-500 via-emerald-500 to-green-600 text-white py-24"
+      >
+        <div className="max-w-6xl mx-auto px-8">
+          <div className="text-center mb-12">
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              transition={{ delay: 0.6, type: 'spring', stiffness: 200 }}
-              className="inline-block text-7xl mb-6"
+              transition={{ type: 'spring', stiffness: 200, delay: 1.2 }}
+              className="text-9xl mb-8"
             >
               💰
             </motion.div>
-            <h2 className="text-3xl font-bold mb-4">
-              We found {result.opportunities.length} ways to reduce your duty costs
-            </h2>
-            <div className="text-8xl font-bold mb-4">
-              <AnimatedCounter
-                value={result.totalPotentialSavings}
-                prefix="$"
-                decimals={0}
-                duration={2}
-              />
-            </div>
-            <p className="text-2xl opacity-90">
-              potential annual savings @ 10,000 units/year
-            </p>
+
+            <motion.h2
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 1.4 }}
+              className="text-7xl font-black mb-8 uppercase"
+            >
+              HERE'S HOW TO FIX IT
+            </motion.h2>
+
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 1.6 }}
+              className="bg-white/20 backdrop-blur-sm rounded-3xl p-12 border-4 border-white/30"
+            >
+              <p className="text-3xl mb-6">Total annual savings:</p>
+              <div className="text-9xl font-black mb-8">
+                <AnimatedCounter
+                  value={result.totalPotentialSavings}
+                  prefix="$"
+                  decimals={0}
+                  duration={2}
+                />
+              </div>
+              <p className="text-4xl font-bold mb-8">
+                That's {comparison.count} {comparison.item} {comparison.emoji}
+              </p>
+              <p className="text-2xl opacity-90">
+                Nike does this. Apple does this. <span className="font-black">Now you can too.</span>
+              </p>
+            </motion.div>
           </div>
-        </motion.div>
+        </div>
+      </motion.div>
 
-        {/* Opportunities */}
-        <div className="mb-12">
-          <h2 className="text-4xl font-bold mb-8">Engineering Opportunities</h2>
+      {/* Simple Opportunities */}
+      <div className="bg-gradient-to-b from-gray-900 to-black text-white py-20">
+        <div className="max-w-6xl mx-auto px-8">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-6xl font-black text-center mb-16 uppercase"
+          >
+            {result.opportunities.length} Simple Changes
+          </motion.h2>
 
-          <div className="space-y-6">
+          <div className="space-y-8">
             {result.opportunities.map((opp, idx) => (
               <motion.div
                 key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6 + idx * 0.1 }}
-                className={`bg-white rounded-3xl p-8 shadow-lg border-2 ${getConfidenceBorder(opp.confidence)} hover:shadow-xl transition-shadow`}
+                initial={{ opacity: 0, x: -50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.2 }}
+                className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-3xl p-8 border-2 border-gray-700 hover:border-green-500 transition-all"
               >
-                {/* Header */}
-                <div className="flex items-start justify-between mb-6">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-apple-blue to-blue-600 rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-lg">
-                      {idx + 1}
-                    </div>
-                    <div>
-                      <span className={`inline-block px-4 py-1.5 rounded-full text-sm font-bold ${getConfidenceColor(opp.confidence)} mb-2`}>
-                        {opp.confidence} Confidence
-                      </span>
-                      <div className="text-3xl font-bold text-green-600">
-                        {opp.reduction} duty reduction
+                <div className="flex items-start gap-6">
+                  {/* Number Badge */}
+                  <div className="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-green-400 to-emerald-500 rounded-2xl flex items-center justify-center text-3xl font-black shadow-lg">
+                    {idx + 1}
+                  </div>
+
+                  <div className="flex-1">
+                    {/* The Change */}
+                    <h3 className="text-3xl font-bold mb-6 text-green-400">{opp.modification}</h3>
+
+                    {/* Before/After Visual */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                      {/* BEFORE - Pain */}
+                      <div className="bg-red-900/30 border-2 border-red-500/50 rounded-2xl p-6">
+                        <div className="flex items-center gap-3 mb-3">
+                          <span className="text-4xl">😰</span>
+                          <div>
+                            <p className="text-sm uppercase tracking-wide text-red-400 font-bold">Currently Paying</p>
+                            <p className="text-5xl font-black text-red-400">{opp.currentRate}</p>
+                          </div>
+                        </div>
+                        <p className="text-sm text-gray-400">HTS {opp.currentHTS}</p>
+                      </div>
+
+                      {/* AFTER - Relief */}
+                      <div className="bg-green-900/30 border-2 border-green-500/50 rounded-2xl p-6 relative">
+                        <div className="absolute -top-4 -right-4 bg-yellow-400 text-black px-4 py-2 rounded-full font-black text-sm">
+                          SAVE {opp.reduction}!
+                        </div>
+                        <div className="flex items-center gap-3 mb-3">
+                          <span className="text-4xl">🎉</span>
+                          <div>
+                            <p className="text-sm uppercase tracking-wide text-green-400 font-bold">With This Change</p>
+                            <p className="text-5xl font-black text-green-400">{opp.newRate}</p>
+                          </div>
+                        </div>
+                        <p className="text-sm text-gray-400">HTS {opp.newHTS}</p>
                       </div>
                     </div>
-                  </div>
-                </div>
 
-                {/* Modification */}
-                <h3 className="text-2xl font-bold mb-6 text-gray-900">{opp.modification}</h3>
+                    {/* The Money */}
+                    <div className="bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 border-2 border-yellow-500/50 rounded-2xl p-6 mb-6">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm text-yellow-400 uppercase tracking-wide font-bold mb-2">Your Savings</p>
+                          <p className="text-5xl font-black text-yellow-300">
+                            <AnimatedCounter
+                              value={opp.savings.annual}
+                              prefix="$"
+                              decimals={0}
+                              duration={1.5}
+                            />
+                            <span className="text-2xl">/year</span>
+                          </p>
+                          <p className="text-xl text-yellow-200 mt-2">
+                            ${opp.savings.perUnit.toFixed(2)} saved per unit
+                          </p>
+                        </div>
+                        <div className="text-7xl">
+                          💸
+                        </div>
+                      </div>
+                    </div>
 
-                {/* Comparison */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 p-6 bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl">
-                  <div>
-                    <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-2">Current</p>
-                    <p className="text-2xl font-bold text-red-600">
-                      HTS {opp.currentHTS}
-                    </p>
-                    <p className="text-xl font-semibold text-red-600">
-                      {opp.currentRate} duty
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-2">After modification</p>
-                    <p className="text-2xl font-bold text-green-600">
-                      HTS {opp.newHTS}
-                    </p>
-                    <p className="text-xl font-semibold text-green-600">
-                      {opp.newRate} duty
-                    </p>
-                  </div>
-                </div>
+                    {/* Why This Works */}
+                    <div className="bg-blue-900/30 border-l-4 border-blue-500 rounded-lg p-6 mb-6">
+                      <p className="text-lg leading-relaxed text-gray-300">{opp.explanation}</p>
+                    </div>
 
-                {/* Explanation */}
-                <p className="text-lg text-gray-700 mb-6 leading-relaxed bg-blue-50 p-6 rounded-2xl border border-blue-100">
-                  {opp.explanation}
-                </p>
-
-                {/* Savings & Rulings */}
-                <div className="flex items-center justify-between pt-6 border-t-2 border-gray-200">
-                  <div>
-                    <p className="text-sm text-gray-600 mb-1 font-semibold">💵 Estimated savings</p>
-                    <p className="text-3xl font-bold text-green-600">
-                      ${opp.savings.perUnit.toFixed(2)}/unit
-                    </p>
-                    <p className="text-lg text-gray-600">
-                      <AnimatedCounter
-                        value={opp.savings.annual}
-                        prefix="$"
-                        decimals={0}
-                        duration={1.5}
-                      />
-                      /year @ 10k units
-                    </p>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {opp.rulings.map(ruling => (
-                      <a
-                        key={ruling.id}
-                        href={ruling.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 bg-white border-2 border-gray-300 hover:border-apple-blue px-4 py-3 rounded-xl text-sm font-semibold transition-all hover:shadow-md"
-                      >
-                        <span>📄</span>
-                        {ruling.id}
-                        <span className="text-apple-blue">→</span>
-                      </a>
-                    ))}
+                    {/* Proof */}
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">📋</span>
+                      <div>
+                        <p className="text-sm text-gray-400 mb-2">Legal precedent from CBP:</p>
+                        <div className="flex gap-2">
+                          {opp.rulings.map(ruling => (
+                            <a
+                              key={ruling.id}
+                              href={ruling.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="bg-gray-700 hover:bg-green-600 px-4 py-2 rounded-lg text-sm font-bold transition-all"
+                            >
+                              {ruling.id} →
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </motion.div>
             ))}
           </div>
         </div>
+      </div>
 
-        {/* CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.0 }}
-          className="text-center mb-12"
-        >
+      {/* Urgency Section */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        className="bg-gradient-to-br from-red-600 to-red-800 text-white py-20"
+      >
+        <div className="max-w-4xl mx-auto px-8 text-center">
+          <div className="text-7xl mb-6">⏰</div>
+          <h2 className="text-5xl font-black mb-8 uppercase">Every Day You Wait Costs You</h2>
+          <div className="text-8xl font-black mb-8 text-yellow-300">
+            ${dailyLoss.toFixed(0)}
+          </div>
+          <p className="text-3xl mb-12">
+            In 30 days, that's <span className="font-black">${(dailyLoss * 30).toFixed(0)}</span> down the drain
+          </p>
           <button
             onClick={() => router.push('/')}
-            className="bg-gradient-to-r from-apple-blue to-blue-600 text-white px-12 py-5 rounded-pill text-xl font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-105"
+            className="bg-white text-red-600 px-12 py-6 rounded-full text-2xl font-black shadow-2xl hover:scale-110 transition-transform"
           >
-            Analyze another product
+            Analyze Another Product →
           </button>
-        </motion.div>
+        </div>
+      </motion.div>
 
-        {/* Disclaimer */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.2 }}
-          className="mt-12 p-8 bg-amber-50 border-2 border-amber-200 rounded-3xl"
-        >
-          <div className="flex gap-4">
-            <span className="text-3xl">⚖️</span>
-            <div>
-              <p className="text-base text-amber-900 font-semibold mb-2">
-                Important Legal Disclaimer
-              </p>
-              <p className="text-sm text-amber-800 mb-2">
-                These opportunities are based on public CBP rulings and AI analysis. This is not legal advice.
-              </p>
-              <p className="text-sm text-amber-800">
-                Always consult a licensed customs broker before making product classification decisions.
-                Rulings are binding only on the specific products they address. Your product may differ in
-                ways that affect classification.
-              </p>
-            </div>
-          </div>
-        </motion.div>
+      {/* Share Section */}
+      <div className="bg-black text-white py-16">
+        <div className="max-w-4xl mx-auto px-8 text-center">
+          <p className="text-2xl text-gray-400 mb-4">Know someone overpaying on imports?</p>
+          <button
+            onClick={() => {
+              if (navigator.share) {
+                navigator.share({
+                  title: 'Tariff Engineer - I found $' + result.totalPotentialSavings.toLocaleString() + ' in savings',
+                  text: 'Just discovered I can save $' + result.totalPotentialSavings.toLocaleString() + '/year on import duties with simple product changes',
+                  url: window.location.origin
+                })
+              } else {
+                navigator.clipboard.writeText(window.location.origin)
+                alert('Link copied!')
+              }
+            }}
+            className="bg-gradient-to-r from-blue-500 to-blue-600 px-8 py-4 rounded-full font-bold hover:scale-105 transition-transform"
+          >
+            📤 Share This Tool
+          </button>
+        </div>
       </div>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-gray-500 py-8 text-center text-sm border-t border-gray-800">
+        <p className="mb-2">⚖️ Based on public CBP rulings. This is not legal advice.</p>
+        <p>Consult a licensed customs broker before making classification decisions.</p>
+      </footer>
     </main>
   )
 }
