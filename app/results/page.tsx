@@ -178,7 +178,7 @@ Disclaimer: Based on public CBP rulings. Not legal advice. Consult a licensed cu
               disabled={downloadingPDF}
               className="btn-primary text-sm py-2 px-4"
             >
-              {downloadingPDF ? 'Generating...' : 'Download PDF'}
+              {downloadingPDF ? 'Generating...' : 'Download Report'}
             </button>
           </div>
         </div>
