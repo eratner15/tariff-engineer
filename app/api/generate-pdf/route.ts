@@ -12,11 +12,14 @@ export async function POST(req: NextRequest) {
     }
 
     // Dynamic import to avoid build issues
+    const React = await import('react')
     const { renderToStream } = await import('@react-pdf/renderer')
     const { TariffReport } = await import('@/components/TariffReport')
 
-    // Generate PDF stream
-    const stream = await renderToStream(<TariffReport data={data} />)
+    // Generate PDF stream using createElement (no JSX in API routes)
+    const stream = await renderToStream(
+      React.createElement(TariffReport, { data })
+    )
 
     // Convert stream to buffer
     const chunks: Uint8Array[] = []
