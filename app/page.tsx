@@ -1,7 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import EmailCaptureModal from '@/components/EmailCaptureModal'
+import ThemeToggle from '@/components/ThemeToggle'
 
 const EXAMPLE_PRODUCTS = [
   {
@@ -25,15 +27,41 @@ const EXAMPLE_PRODUCTS = [
 export default function Home() {
   const [description, setDescription] = useState('')
   const [isAnalyzing, setIsAnalyzing] = useState(false)
+  const [showEmailModal, setShowEmailModal] = useState(false)
+  const [productsAnalyzed, setProductsAnalyzed] = useState(0)
   const router = useRouter()
+
+  useEffect(() => {
+    // Fetch analytics to show product count
+    fetch('/api/analytics')
+      .then(res => res.json())
+      .then(data => setProductsAnalyzed(data.totalSearches || 0))
+      .catch(() => setProductsAnalyzed(0))
+  }, [])
 
   const handleAnalyze = async () => {
     if (!description.trim()) return
 
-    setIsAnalyzing(true)
     sessionStorage.setItem('productDescription', description)
+    setShowEmailModal(true)
+  }
 
-    // Navigate to results
+  const handleEmailSubmit = (email: string) => {
+    console.log('Email captured:', email)
+    setShowEmailModal(false)
+    setIsAnalyzing(true)
+
+    // Navigate to results after brief delay
+    setTimeout(() => {
+      router.push('/results')
+    }, 300)
+  }
+
+  const handleEmailSkip = () => {
+    setShowEmailModal(false)
+    setIsAnalyzing(true)
+
+    // Navigate to results after brief delay
     setTimeout(() => {
       router.push('/results')
     }, 300)
@@ -44,11 +72,30 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen" style={{ backgroundColor: 'var(--color-bg)' }}>
-      {/* Hero Section */}
+    <>
+      <EmailCaptureModal
+        isOpen={showEmailModal}
+        onClose={handleEmailSkip}
+        onSubmit={handleEmailSubmit}
+      />
+
+      <main className="min-h-screen" style={{ backgroundColor: 'var(--color-bg)' }}>
+        {/* Theme Toggle */}
+        <div className="fixed top-6 right-6 z-50">
+          <ThemeToggle />
+        </div>
+
+        {/* Hero Section */}
       <div className="max-w-[680px] mx-auto px-6 pt-20 pb-24">
         {/* Eyebrow */}
-        <p className="text-sm text-muted mb-4 text-center">Rat Links · The Build</p>
+        <p className="text-sm text-muted mb-4 text-center">
+          Rat Links · The Build
+          {productsAnalyzed > 0 && (
+            <span className="ml-3 px-3 py-1 rounded-full" style={{ backgroundColor: '#f5f5f7', color: 'var(--color-text)', fontSize: '11px' }}>
+              {productsAnalyzed.toLocaleString()} products analyzed
+            </span>
+          )}
+        </p>
 
         {/* Headline */}
         <h1
@@ -193,6 +240,82 @@ export default function Home() {
         </div>
       </div>
 
+      {/* Comparison Table */}
+      <div className="py-20" style={{ backgroundColor: '#ffffff' }}>
+        <div className="max-w-[880px] mx-auto px-6">
+          <h2 className="text-3xl font-semibold text-center mb-12" style={{ color: 'var(--color-text)' }}>
+            Why Tariff Engineer?
+          </h2>
+
+          <div className="overflow-x-auto">
+            <table className="w-full" style={{ borderCollapse: 'separate', borderSpacing: '0 12px' }}>
+              <thead>
+                <tr>
+                  <th className="text-left py-4 px-6" style={{ color: 'var(--color-muted)' }}>
+                    <span className="text-sm font-medium">Feature</span>
+                  </th>
+                  <th className="text-center py-4 px-6" style={{ backgroundColor: '#f5f5f7', borderRadius: '12px 12px 0 0' }}>
+                    <span className="text-sm font-semibold" style={{ color: 'var(--color-accent)' }}>Tariff Engineer</span>
+                  </th>
+                  <th className="text-center py-4 px-6" style={{ color: 'var(--color-muted)' }}>
+                    <span className="text-sm font-medium">Customs Broker</span>
+                  </th>
+                  <th className="text-center py-4 px-6" style={{ color: 'var(--color-muted)' }}>
+                    <span className="text-sm font-medium">Manual Research</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="py-4 px-6" style={{ color: 'var(--color-text)' }}>Analysis Speed</td>
+                  <td className="text-center py-4 px-6" style={{ backgroundColor: '#f5f5f7' }}>
+                    <strong style={{ color: 'var(--color-positive)' }}>2 minutes</strong>
+                  </td>
+                  <td className="text-center py-4 px-6" style={{ color: 'var(--color-muted)' }}>2-4 weeks</td>
+                  <td className="text-center py-4 px-6" style={{ color: 'var(--color-muted)' }}>Days</td>
+                </tr>
+                <tr>
+                  <td className="py-4 px-6" style={{ color: 'var(--color-text)' }}>Cost</td>
+                  <td className="text-center py-4 px-6" style={{ backgroundColor: '#f5f5f7' }}>
+                    <strong style={{ color: 'var(--color-positive)' }}>Free demo</strong>
+                  </td>
+                  <td className="text-center py-4 px-6" style={{ color: 'var(--color-muted)' }}>$2K-10K</td>
+                  <td className="text-center py-4 px-6" style={{ color: 'var(--color-muted)' }}>Your time</td>
+                </tr>
+                <tr>
+                  <td className="py-4 px-6" style={{ color: 'var(--color-text)' }}>Ruling Database</td>
+                  <td className="text-center py-4 px-6" style={{ backgroundColor: '#f5f5f7' }}>
+                    <strong style={{ color: 'var(--color-positive)' }}>10,000+ rulings</strong>
+                  </td>
+                  <td className="text-center py-4 px-6" style={{ color: 'var(--color-muted)' }}>Limited</td>
+                  <td className="text-center py-4 px-6" style={{ color: 'var(--color-muted)' }}>Manual</td>
+                </tr>
+                <tr>
+                  <td className="py-4 px-6" style={{ color: 'var(--color-text)' }}>Engineering Ideas</td>
+                  <td className="text-center py-4 px-6" style={{ backgroundColor: '#f5f5f7' }}>
+                    <strong style={{ color: 'var(--color-positive)' }}>3-5 options</strong>
+                  </td>
+                  <td className="text-center py-4 px-6" style={{ color: 'var(--color-muted)' }}>1-2 options</td>
+                  <td className="text-center py-4 px-6" style={{ color: 'var(--color-muted)' }}>Limited</td>
+                </tr>
+                <tr>
+                  <td className="py-4 px-6" style={{ color: 'var(--color-text)' }}>PDF Reports</td>
+                  <td className="text-center py-4 px-6" style={{ backgroundColor: '#f5f5f7', borderRadius: '0 0 12px 12px' }}>
+                    <strong style={{ color: 'var(--color-positive)' }}>✓</strong>
+                  </td>
+                  <td className="text-center py-4 px-6" style={{ color: 'var(--color-muted)' }}>✓</td>
+                  <td className="text-center py-4 px-6" style={{ color: 'var(--color-muted)' }}>—</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p className="text-center mt-8 text-sm" style={{ color: 'var(--color-muted)' }}>
+            * Tariff Engineer provides automated analysis. Always consult a licensed customs broker before implementing changes.
+          </p>
+        </div>
+      </div>
+
       {/* CTA Section */}
       <div className="py-20" style={{ backgroundColor: '#ffffff' }}>
         <div className="max-w-[680px] mx-auto px-6 text-center">
@@ -223,6 +346,7 @@ export default function Home() {
           {' '}· Not legal advice
         </p>
       </footer>
-    </main>
+      </main>
+    </>
   )
 }

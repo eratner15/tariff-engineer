@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    /* Apple Design System Colors */
+    /* Apple Design System Colors - Light Mode */
     --color-bg: #fafafa;
     --color-text: #1d1d1f;
     --color-muted: #86868b;
@@ -14,6 +14,19 @@
     --color-negative: #ff3b30;
     --color-card-bg: #ffffff;
     --color-card-shadow: rgba(0, 0, 0, 0.04);
+  }
+
+  :root[data-theme='dark'] {
+    /* Dark Mode Colors */
+    --color-bg: #0a0a0a;
+    --color-text: #fafafa;
+    --color-muted: #737373;
+    --color-border: #262626;
+    --color-accent: #0a84ff;
+    --color-positive: #32d74b;
+    --color-negative: #ff453a;
+    --color-card-bg: #171717;
+    --color-card-shadow: rgba(255, 255, 255, 0.03);
   }
 
   * {

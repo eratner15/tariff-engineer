@@ -1,0 +1,142 @@
+[
+  {
+    "code": "6402.91.50",
+    "description": "Footwear with outer soles and uppers of rubber or plastics, covering the ankle, with uppers of which over 90 percent of the external surface area is rubber or plastics",
+    "dutyRate": "37.5%",
+    "category": "Footwear",
+    "notes": "Common for athletic shoes and sneakers"
+  },
+  {
+    "code": "6404.19.90",
+    "description": "Footwear with outer soles of rubber/plastics and uppers of textile materials, other",
+    "dutyRate": "7.5%",
+    "category": "Footwear",
+    "notes": "Can apply to certain athletic footwear with textile components"
+  },
+  {
+    "code": "6403.51.60",
+    "description": "Footwear with outer soles of rubber/plastics and uppers of leather, covering the ankle",
+    "dutyRate": "8.5%",
+    "category": "Footwear",
+    "notes": "Leather boots and ankle-covering shoes"
+  },
+  {
+    "code": "8517.62.00",
+    "description": "Machines for the reception, conversion and transmission or regeneration of voice, images or other data",
+    "dutyRate": "Free",
+    "category": "Electronics",
+    "notes": "Can include certain smartwatches with cellular connectivity"
+  },
+  {
+    "code": "9102.11.10",
+    "description": "Wristwatches with case of precious metal or clad with precious metal, electrically operated, with mechanical display only",
+    "dutyRate": "6.25% + $1.61/unit",
+    "category": "Wearables",
+    "notes": "Traditional watches; some smartwatches may qualify"
+  },
+  {
+    "code": "8518.30.20",
+    "description": "Headphones and earphones, whether or not combined with a microphone",
+    "dutyRate": "Free",
+    "category": "Electronics",
+    "notes": "Wireless earbuds, headphones"
+  },
+  {
+    "code": "4202.92.15",
+    "description": "Travel, sports and similar bags with outer surface of textile materials, of vegetable fibers",
+    "dutyRate": "17.6%",
+    "category": "Bags",
+    "notes": "Backpacks, duffel bags, sports bags"
+  },
+  {
+    "code": "4202.32.95",
+    "description": "Articles normally carried in pocket or handbag, with outer surface of leather",
+    "dutyRate": "8%",
+    "category": "Bags",
+    "notes": "Leather cases, wallets, small bags"
+  },
+  {
+    "code": "4202.92.45",
+    "description": "Travel, sports and similar bags with outer surface of sheeting of plastic",
+    "dutyRate": "20%",
+    "category": "Bags",
+    "notes": "Plastic-exterior bags and luggage"
+  },
+  {
+    "code": "6211.43.00",
+    "description": "Track suits, ski-suits and swimwear; other garments, men's or boys', of man-made fibers",
+    "dutyRate": "28.2%",
+    "category": "Apparel",
+    "notes": "Athletic wear, sports clothing"
+  },
+  {
+    "code": "6212.10.50",
+    "description": "Brassieres and parts thereof, of man-made fibers",
+    "dutyRate": "16%",
+    "category": "Apparel",
+    "notes": "Sports bras, athletic support garments"
+  },
+  {
+    "code": "6115.96.90",
+    "description": "Other hosiery, of synthetic fibers",
+    "dutyRate": "14.6%",
+    "category": "Apparel",
+    "notes": "Compression socks, athletic socks"
+  },
+  {
+    "code": "9506.91.00",
+    "description": "Articles and equipment for general physical exercise, gymnastics or athletics",
+    "dutyRate": "4.4%",
+    "category": "Sports Equipment",
+    "notes": "Dumbbells, weights, resistance bands"
+  },
+  {
+    "code": "9506.70.20",
+    "description": "Ice skates and roller skates, including skating boots with skates attached",
+    "dutyRate": "Free",
+    "category": "Sports Equipment",
+    "notes": "Roller skates, inline skates"
+  },
+  {
+    "code": "8471.30.01",
+    "description": "Portable automatic data processing machines, weighing not more than 10 kg",
+    "dutyRate": "Free",
+    "category": "Electronics",
+    "notes": "Laptops, tablets with keyboards"
+  },
+  {
+    "code": "9021.90.80",
+    "description": "Other orthopedic appliances",
+    "dutyRate": "Free",
+    "category": "Medical/Sports",
+    "notes": "Knee braces, support devices"
+  },
+  {
+    "code": "3926.20.90",
+    "description": "Other articles of apparel and clothing accessories of plastics or rubber",
+    "dutyRate": "4%",
+    "category": "Accessories",
+    "notes": "Rubber resistance bands, plastic accessories"
+  },
+  {
+    "code": "6307.90.98",
+    "description": "Other made up articles of other textile materials",
+    "dutyRate": "7%",
+    "category": "Accessories",
+    "notes": "Textile accessories, armbands, pouches"
+  },
+  {
+    "code": "6406.10.65",
+    "description": "Uppers and parts thereof of footwear, of which over 90% of external surface is rubber/plastics",
+    "dutyRate": "6%",
+    "category": "Footwear Parts",
+    "notes": "Insoles, shoe components"
+  },
+  {
+    "code": "9619.00.90",
+    "description": "Sanitary towels and tampons, napkins and napkin liners for babies and similar articles, of other materials",
+    "dutyRate": "Free",
+    "category": "Personal Care",
+    "notes": "Hygiene wipes, disposable products"
+  }
+]

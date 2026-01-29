@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import SavingsCalculator from '@/components/SavingsCalculator'
 
 interface Opportunity {
   modification: string
@@ -36,6 +37,7 @@ export default function ResultsPage() {
   const [result, setResult] = useState<AnalysisResult | null>(null)
   const [activeModIndex, setActiveModIndex] = useState(0)
   const [showCopied, setShowCopied] = useState(false)
+  const [downloadingPDF, setDownloadingPDF] = useState(false)
 
   useEffect(() => {
     const description = sessionStorage.getItem('productDescription')
@@ -101,6 +103,40 @@ Disclaimer: Based on public CBP rulings. Not legal advice. Consult a licensed cu
     setTimeout(() => setShowCopied(false), 2000)
   }
 
+  const handleDownloadPDF = async () => {
+    if (!result) return
+
+    setDownloadingPDF(true)
+
+    try {
+      const response = await fetch('/api/generate-pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(result)
+      })
+
+      if (!response.ok) {
+        throw new Error('PDF generation failed')
+      }
+
+      // Create download link
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `tariff-analysis-${Date.now()}.pdf`
+      document.body.appendChild(a)
+      a.click()
+      window.URL.revokeObjectURL(url)
+      document.body.removeChild(a)
+    } catch (error) {
+      console.error('PDF download error:', error)
+      alert('Failed to generate PDF. Please try again.')
+    } finally {
+      setDownloadingPDF(false)
+    }
+  }
+
   // Loading State
   if (loading || !result) {
     return (
@@ -130,12 +166,21 @@ Disclaimer: Based on public CBP rulings. Not legal advice. Consult a licensed cu
           >
             ← New analysis
           </button>
-          <button
-            onClick={handleCopySummary}
-            className="btn-secondary text-sm py-2 px-4"
-          >
-            {showCopied ? '✓ Copied' : 'Copy summary'}
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={handleCopySummary}
+              className="btn-secondary text-sm py-2 px-4"
+            >
+              {showCopied ? '✓ Copied' : 'Copy summary'}
+            </button>
+            <button
+              onClick={handleDownloadPDF}
+              disabled={downloadingPDF}
+              className="btn-primary text-sm py-2 px-4"
+            >
+              {downloadingPDF ? 'Generating...' : 'Download PDF'}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -301,6 +346,16 @@ Disclaimer: Based on public CBP rulings. Not legal advice. Consult a licensed cu
             </div>
           </section>
         )}
+
+        {/* Interactive Savings Calculator */}
+        <section className="mb-16">
+          <SavingsCalculator
+            currentRate={parseFloat(activeMod.currentRate) || 0}
+            newRate={parseFloat(activeMod.newRate) || 0}
+            productName={result.product}
+          />
+        </section>
+
 
         {/* CTA */}
         <section className="text-center py-12">

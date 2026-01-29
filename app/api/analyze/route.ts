@@ -1,13 +1,66 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { NextRequest, NextResponse } from 'next/server'
-import { RULINGS } from '@/lib/data/rulings'
 import { getMockAnalysis } from '@/lib/mock-analysis'
+import rulings from '@/data/rulings.json'
+import fs from 'fs'
+import path from 'path'
 
 const USE_MOCK_MODE = !process.env.ANTHROPIC_API_KEY
 
 const anthropic = USE_MOCK_MODE ? null : new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY || '',
 })
+
+// Search for relevant rulings
+async function searchRulings(description: string) {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/search-rulings`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ description })
+    })
+
+    if (!response.ok) {
+      console.error('Search failed, using all rulings as fallback')
+      return rulings.slice(0, 10)
+    }
+
+    const data = await response.json()
+    return data.rulings || rulings.slice(0, 10)
+  } catch (error) {
+    console.error('Search error, using all rulings as fallback:', error)
+    return rulings.slice(0, 10)
+  }
+}
+
+// Track search for analytics
+function trackSearch(description: string, category: string) {
+  try {
+    const dataDir = path.join(process.cwd(), 'data')
+    const searchesFile = path.join(dataDir, 'searches.json')
+
+    if (!fs.existsSync(dataDir)) {
+      fs.mkdirSync(dataDir, { recursive: true })
+    }
+
+    let searches: any[] = []
+    if (fs.existsSync(searchesFile)) {
+      const data = fs.readFileSync(searchesFile, 'utf-8')
+      searches = JSON.parse(data)
+    }
+
+    searches.push({
+      product: description,
+      category,
+      timestamp: Date.now(),
+      date: new Date().toISOString()
+    })
+
+    fs.writeFileSync(searchesFile, JSON.stringify(searches, null, 2))
+  } catch (error) {
+    console.error('Search tracking error:', error)
+  }
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -16,6 +69,18 @@ export async function POST(req: NextRequest) {
     if (!description) {
       return NextResponse.json({ error: 'Product description is required' }, { status: 400 })
     }
+
+    // Detect category for analytics
+    const lower = description.toLowerCase()
+    let category = 'Other'
+    if (lower.includes('shoe') || lower.includes('footwear')) category = 'Footwear'
+    else if (lower.includes('watch') || lower.includes('wearable')) category = 'Wearables'
+    else if (lower.includes('earbud') || lower.includes('headphone') || lower.includes('electronic')) category = 'Electronics'
+    else if (lower.includes('bag') || lower.includes('backpack')) category = 'Bags'
+    else if (lower.includes('apparel') || lower.includes('clothing')) category = 'Apparel'
+
+    // Track search
+    trackSearch(description, category)
 
     // Use mock analysis if no API key is set (demo mode)
     if (USE_MOCK_MODE) {
@@ -26,14 +91,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(mockResult)
     }
 
+    // Search for relevant rulings
+    const relevantRulings = await searchRulings(description)
+    console.log(`Found ${relevantRulings.length} relevant rulings`)
+
     // Prepare rulings context for Claude
-    const rulingsContext = RULINGS.map(r => `
+    const rulingsContext = relevantRulings.map((r: any) => `
 RULING ${r.id}:
-Category: ${r.category.join(', ')}
-HTS Codes: ${r.htsCodes.map(h => `${h.code} (${h.rate}): ${h.description}`).join(' | ')}
-Summary: ${r.summary}
-Key Factors: ${r.keyFactors.join('; ')}
-Engineering Insight: ${r.engineeringInsight}
+Date: ${r.issueDate}
+Category: ${r.category}
+HTS Codes: ${r.htsCodes.join(', ')}
+Duty Rate: ${r.dutyRate}
+Product: ${r.productDescription}
+Decision: ${r.decision}
+URL: ${r.url}
 `).join('\n---\n')
 
     const prompt = `You are a tariff classification expert analyzing products for legal tariff engineering opportunities.
