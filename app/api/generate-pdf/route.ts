@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { renderToStream } from '@react-pdf/renderer'
-import { TariffReport } from '@/components/TariffReport'
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,6 +10,10 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       )
     }
+
+    // Dynamic import to avoid build issues
+    const { renderToStream } = await import('@react-pdf/renderer')
+    const { TariffReport } = await import('@/components/TariffReport')
 
     // Generate PDF stream
     const stream = await renderToStream(<TariffReport data={data} />)
