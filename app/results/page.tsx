@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { motion, useMotionValue, useTransform, animate } from 'framer-motion'
-import { AnimatedCounter } from '@/components/AnimatedCounter'
 
 interface Opportunity {
   modification: string
@@ -32,30 +30,12 @@ interface AnalysisResult {
   totalPotentialSavings: number
 }
 
-function MoneyLossCounter({ dailyLoss }: { dailyLoss: number }) {
-  const [seconds, setSeconds] = useState(0)
-  const lossPerSecond = dailyLoss / (24 * 60 * 60)
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setSeconds(s => s + 1)
-    }, 1000)
-    return () => clearInterval(interval)
-  }, [])
-
-  const currentLoss = seconds * lossPerSecond
-
-  return (
-    <span className="font-mono">
-      ${currentLoss.toFixed(2)}
-    </span>
-  )
-}
-
 export default function ResultsPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [result, setResult] = useState<AnalysisResult | null>(null)
+  const [activeModIndex, setActiveModIndex] = useState(0)
+  const [showCopied, setShowCopied] = useState(false)
 
   useEffect(() => {
     const description = sessionStorage.getItem('productDescription')
@@ -88,314 +68,268 @@ export default function ResultsPage() {
     fetchAnalysis()
   }, [router])
 
+  const handleCopySummary = () => {
+    if (!result) return
+
+    const summary = `TARIFF ENGINEERING ANALYSIS
+
+Product: ${result.product}
+
+Current Classification:
+HTS ${result.currentClassification.hts} @ ${result.currentClassification.rate}
+${result.currentClassification.description}
+
+Engineering Opportunities:
+
+${result.opportunities.map((opp, idx) => `
+${idx + 1}. ${opp.modification}
+   Current: HTS ${opp.currentHTS} @ ${opp.currentRate}
+   New: HTS ${opp.newHTS} @ ${opp.newRate}
+   Reduction: ${opp.reduction}
+   Confidence: ${opp.confidence}
+   Annual Savings: $${opp.savings.annual.toLocaleString()}/year
+   Supporting Rulings: ${opp.rulings.map(r => r.id).join(', ')}
+`).join('\n')}
+
+Total Potential Annual Savings: $${result.totalPotentialSavings.toLocaleString()}
+
+Disclaimer: Based on public CBP rulings. Not legal advice. Consult a licensed customs broker.
+`
+
+    navigator.clipboard.writeText(summary)
+    setShowCopied(true)
+    setTimeout(() => setShowCopied(false), 2000)
+  }
+
+  // Loading State
   if (loading || !result) {
     return (
-      <main className="min-h-screen bg-gradient-to-br from-red-500 via-red-600 to-red-700 flex items-center justify-center">
-        <motion.div
-          initial={{ scale: 0.5, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          className="text-center text-white"
-        >
-          <div className="text-8xl mb-8">💸</div>
-          <h1 className="text-6xl font-bold mb-6">Calculating your losses...</h1>
-          <div className="w-20 h-20 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto"></div>
-        </motion.div>
+      <main
+        className="min-h-screen flex items-center justify-center"
+        style={{ backgroundColor: 'var(--color-bg)' }}
+      >
+        <div className="text-center">
+          <div className="spinner mx-auto mb-6"></div>
+          <p style={{ color: 'var(--color-muted)' }}>Analyzing classifications...</p>
+        </div>
       </main>
     )
   }
 
-  const dailyLoss = result.totalPotentialSavings / 365
-  const monthlyLoss = result.totalPotentialSavings / 12
-  const perUnitAverage = result.opportunities[0]?.savings.perUnit || 0
-
-  // Real-world comparisons
-  const getComparison = (amount: number) => {
-    if (amount >= 300000) return { item: 'Tesla Model S', emoji: '🚗', count: Math.floor(amount / 100000) }
-    if (amount >= 150000) return { item: 'senior engineer salaries', emoji: '👨‍💻', count: Math.floor(amount / 150000) }
-    if (amount >= 50000) return { item: 'junior engineer salaries', emoji: '💼', count: Math.floor(amount / 50000) }
-    return { item: 'MacBook Pros', emoji: '💻', count: Math.floor(amount / 3000) }
-  }
-
-  const comparison = getComparison(result.totalPotentialSavings)
+  const activeMod = result.opportunities[activeModIndex]
 
   return (
-    <main className="min-h-screen bg-black">
-      {/* STOP LOSING MONEY Section */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="bg-gradient-to-br from-red-600 via-red-700 to-red-900 text-white py-20"
-      >
-        <div className="max-w-6xl mx-auto px-8 text-center">
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ type: 'spring', stiffness: 200, delay: 0.2 }}
-            className="text-9xl mb-8"
+    <main className="min-h-screen" style={{ backgroundColor: 'var(--color-bg)' }}>
+      {/* Header */}
+      <div className="border-b py-6" style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-card-bg)' }}>
+        <div className="max-w-[680px] mx-auto px-6 flex justify-between items-center">
+          <button
+            onClick={() => router.push('/')}
+            style={{ color: 'var(--color-accent)' }}
+            className="font-medium text-sm hover:opacity-80 transition-opacity"
           >
-            🚨
-          </motion.div>
-
-          <motion.h1
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.4 }}
-            className="text-7xl md:text-8xl font-black mb-6 uppercase tracking-tight"
+            ← New analysis
+          </button>
+          <button
+            onClick={handleCopySummary}
+            className="btn-secondary text-sm py-2 px-4"
           >
-            STOP LOSING MONEY
-          </motion.h1>
-
-          <motion.p
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.6 }}
-            className="text-3xl mb-12 opacity-90"
-          >
-            You've been overpaying on every single unit
-          </motion.p>
-
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.8 }}
-            className="bg-black/30 backdrop-blur-sm rounded-3xl p-12 border-4 border-white/20"
-          >
-            <p className="text-2xl mb-4 opacity-90">Money lost since you opened this page:</p>
-            <div className="text-8xl font-black mb-4 text-yellow-300">
-              <MoneyLossCounter dailyLoss={dailyLoss} />
-            </div>
-            <p className="text-xl opacity-75">
-              That's <span className="font-bold">${dailyLoss.toFixed(2)}/day</span> • <span className="font-bold">${(monthlyLoss).toFixed(0)}/month</span> • <span className="font-bold">${result.totalPotentialSavings.toLocaleString()}/year</span>
-            </p>
-          </motion.div>
-        </div>
-      </motion.div>
-
-      {/* THE FLIP - Savings Opportunity */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.0 }}
-        className="bg-gradient-to-br from-green-500 via-emerald-500 to-green-600 text-white py-24"
-      >
-        <div className="max-w-6xl mx-auto px-8">
-          <div className="text-center mb-12">
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: 'spring', stiffness: 200, delay: 1.2 }}
-              className="text-9xl mb-8"
-            >
-              💰
-            </motion.div>
-
-            <motion.h2
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 1.4 }}
-              className="text-7xl font-black mb-8 uppercase"
-            >
-              HERE'S HOW TO FIX IT
-            </motion.h2>
-
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 1.6 }}
-              className="bg-white/20 backdrop-blur-sm rounded-3xl p-12 border-4 border-white/30"
-            >
-              <p className="text-3xl mb-6">Total annual savings:</p>
-              <div className="text-9xl font-black mb-8">
-                <AnimatedCounter
-                  value={result.totalPotentialSavings}
-                  prefix="$"
-                  decimals={0}
-                  duration={2}
-                />
-              </div>
-              <p className="text-4xl font-bold mb-8">
-                That's {comparison.count} {comparison.item} {comparison.emoji}
-              </p>
-              <p className="text-2xl opacity-90">
-                Nike does this. Apple does this. <span className="font-black">Now you can too.</span>
-              </p>
-            </motion.div>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Simple Opportunities */}
-      <div className="bg-gradient-to-b from-gray-900 to-black text-white py-20">
-        <div className="max-w-6xl mx-auto px-8">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-6xl font-black text-center mb-16 uppercase"
-          >
-            {result.opportunities.length} Simple Changes
-          </motion.h2>
-
-          <div className="space-y-8">
-            {result.opportunities.map((opp, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, x: -50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.2 }}
-                className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-3xl p-8 border-2 border-gray-700 hover:border-green-500 transition-all"
-              >
-                <div className="flex items-start gap-6">
-                  {/* Number Badge */}
-                  <div className="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-green-400 to-emerald-500 rounded-2xl flex items-center justify-center text-3xl font-black shadow-lg">
-                    {idx + 1}
-                  </div>
-
-                  <div className="flex-1">
-                    {/* The Change */}
-                    <h3 className="text-3xl font-bold mb-6 text-green-400">{opp.modification}</h3>
-
-                    {/* Before/After Visual */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                      {/* BEFORE - Pain */}
-                      <div className="bg-red-900/30 border-2 border-red-500/50 rounded-2xl p-6">
-                        <div className="flex items-center gap-3 mb-3">
-                          <span className="text-4xl">😰</span>
-                          <div>
-                            <p className="text-sm uppercase tracking-wide text-red-400 font-bold">Currently Paying</p>
-                            <p className="text-5xl font-black text-red-400">{opp.currentRate}</p>
-                          </div>
-                        </div>
-                        <p className="text-sm text-gray-400">HTS {opp.currentHTS}</p>
-                      </div>
-
-                      {/* AFTER - Relief */}
-                      <div className="bg-green-900/30 border-2 border-green-500/50 rounded-2xl p-6 relative">
-                        <div className="absolute -top-4 -right-4 bg-yellow-400 text-black px-4 py-2 rounded-full font-black text-sm">
-                          SAVE {opp.reduction}!
-                        </div>
-                        <div className="flex items-center gap-3 mb-3">
-                          <span className="text-4xl">🎉</span>
-                          <div>
-                            <p className="text-sm uppercase tracking-wide text-green-400 font-bold">With This Change</p>
-                            <p className="text-5xl font-black text-green-400">{opp.newRate}</p>
-                          </div>
-                        </div>
-                        <p className="text-sm text-gray-400">HTS {opp.newHTS}</p>
-                      </div>
-                    </div>
-
-                    {/* The Money */}
-                    <div className="bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 border-2 border-yellow-500/50 rounded-2xl p-6 mb-6">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-sm text-yellow-400 uppercase tracking-wide font-bold mb-2">Your Savings</p>
-                          <p className="text-5xl font-black text-yellow-300">
-                            <AnimatedCounter
-                              value={opp.savings.annual}
-                              prefix="$"
-                              decimals={0}
-                              duration={1.5}
-                            />
-                            <span className="text-2xl">/year</span>
-                          </p>
-                          <p className="text-xl text-yellow-200 mt-2">
-                            ${opp.savings.perUnit.toFixed(2)} saved per unit
-                          </p>
-                        </div>
-                        <div className="text-7xl">
-                          💸
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Why This Works */}
-                    <div className="bg-blue-900/30 border-l-4 border-blue-500 rounded-lg p-6 mb-6">
-                      <p className="text-lg leading-relaxed text-gray-300">{opp.explanation}</p>
-                    </div>
-
-                    {/* Proof */}
-                    <div className="flex items-center gap-3">
-                      <span className="text-2xl">📋</span>
-                      <div>
-                        <p className="text-sm text-gray-400 mb-2">Legal precedent from CBP:</p>
-                        <div className="flex gap-2">
-                          {opp.rulings.map(ruling => (
-                            <a
-                              key={ruling.id}
-                              href={ruling.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="bg-gray-700 hover:bg-green-600 px-4 py-2 rounded-lg text-sm font-bold transition-all"
-                            >
-                              {ruling.id} →
-                            </a>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+            {showCopied ? '✓ Copied' : 'Copy summary'}
+          </button>
         </div>
       </div>
 
-      {/* Urgency Section */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        className="bg-gradient-to-br from-red-600 to-red-800 text-white py-20"
-      >
-        <div className="max-w-4xl mx-auto px-8 text-center">
-          <div className="text-7xl mb-6">⏰</div>
-          <h2 className="text-5xl font-black mb-8 uppercase">Every Day You Wait Costs You</h2>
-          <div className="text-8xl font-black mb-8 text-yellow-300">
-            ${dailyLoss.toFixed(0)}
-          </div>
-          <p className="text-3xl mb-12">
-            In 30 days, that's <span className="font-black">${(dailyLoss * 30).toFixed(0)}</span> down the drain
-          </p>
-          <button
-            onClick={() => router.push('/')}
-            className="bg-white text-red-600 px-12 py-6 rounded-full text-2xl font-black shadow-2xl hover:scale-110 transition-transform"
-          >
-            Analyze Another Product →
-          </button>
+      <div className="max-w-[680px] mx-auto px-6 py-12">
+        {/* Product */}
+        <div className="mb-16">
+          <p className="section-label">Your Product</p>
+          <p className="text-lg" style={{ color: 'var(--color-text)' }}>{result.product}</p>
         </div>
-      </motion.div>
 
-      {/* Share Section */}
-      <div className="bg-black text-white py-16">
-        <div className="max-w-4xl mx-auto px-8 text-center">
-          <p className="text-2xl text-gray-400 mb-4">Know someone overpaying on imports?</p>
-          <button
-            onClick={() => {
-              if (navigator.share) {
-                navigator.share({
-                  title: 'Tariff Engineer - I found $' + result.totalPotentialSavings.toLocaleString() + ' in savings',
-                  text: 'Just discovered I can save $' + result.totalPotentialSavings.toLocaleString() + '/year on import duties with simple product changes',
-                  url: window.location.origin
-                })
-              } else {
-                navigator.clipboard.writeText(window.location.origin)
-                alert('Link copied!')
-              }
-            }}
-            className="bg-gradient-to-r from-blue-500 to-blue-600 px-8 py-4 rounded-full font-bold hover:scale-105 transition-transform"
-          >
-            📤 Share This Tool
-          </button>
-        </div>
+        {/* Current Classification */}
+        <section className="mb-16">
+          <p className="section-label">Current Classification</p>
+          <div className="grid grid-cols-2 gap-6">
+            <div>
+              <span className="stat-label">HTS Code</span>
+              <span className="stat-value font-mono">{result.currentClassification.hts}</span>
+            </div>
+            <div>
+              <span className="stat-label">Duty Rate</span>
+              <span className="stat-value" style={{ color: 'var(--color-negative)' }}>
+                {result.currentClassification.rate}
+              </span>
+            </div>
+          </div>
+          <p className="mt-4 text-sm" style={{ color: 'var(--color-muted)' }}>
+            {result.currentClassification.description}
+          </p>
+        </section>
+
+        {/* Engineering Opportunities */}
+        <section className="mb-16">
+          <p className="section-label">Engineering Opportunities</p>
+
+          {/* Tabs */}
+          <div className="flex gap-3 mb-8 overflow-x-auto pb-2">
+            {result.opportunities.map((opp, idx) => (
+              <button
+                key={idx}
+                onClick={() => setActiveModIndex(idx)}
+                className={`px-6 py-3 rounded-pill font-medium text-sm whitespace-nowrap transition-all ${
+                  activeModIndex === idx
+                    ? 'btn-primary'
+                    : 'btn-secondary'
+                }`}
+              >
+                Option {idx + 1}
+              </button>
+            ))}
+          </div>
+
+          {/* Active Modification */}
+          <div className="card">
+            <h3 className="text-2xl font-semibold mb-3" style={{ color: 'var(--color-text)' }}>
+              {activeMod.modification}
+            </h3>
+            <p className="mb-6" style={{ color: 'var(--color-muted)' }}>
+              {activeMod.explanation}
+            </p>
+
+            {/* Before/After Grid */}
+            <div className="grid grid-cols-3 gap-6 p-6 rounded-2xl mb-6" style={{ backgroundColor: '#f5f5f7' }}>
+              <div>
+                <span className="stat-label">New HTS</span>
+                <span className="font-mono block font-semibold" style={{ color: 'var(--color-text)' }}>
+                  {activeMod.newHTS}
+                </span>
+              </div>
+              <div>
+                <span className="stat-label">New Rate</span>
+                <span className="font-semibold block" style={{ color: 'var(--color-positive)' }}>
+                  {activeMod.newRate}
+                </span>
+              </div>
+              <div>
+                <span className="stat-label">Reduction</span>
+                <span className="font-semibold block" style={{ color: 'var(--color-positive)' }}>
+                  {activeMod.reduction}
+                </span>
+              </div>
+            </div>
+
+            {/* Confidence Bar */}
+            <div className="mb-6">
+              <div className="flex justify-between mb-2">
+                <span className="text-sm" style={{ color: 'var(--color-muted)' }}>Confidence</span>
+                <span className="text-sm font-semibold" style={{ color: 'var(--color-text)' }}>
+                  {activeMod.confidence}
+                </span>
+              </div>
+              <div className="h-1 rounded-full overflow-hidden" style={{ backgroundColor: '#e5e5e7' }}>
+                <div
+                  className="h-full rounded-full transition-all duration-300"
+                  style={{
+                    width: activeMod.confidence === 'High' ? '85%' : activeMod.confidence === 'Medium' ? '60%' : '35%',
+                    backgroundColor: 'var(--color-positive)'
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Ruling Links */}
+            <div className="p-4 rounded-xl flex justify-between items-center" style={{ backgroundColor: '#f5f5f7' }}>
+              <span className="text-sm" style={{ color: 'var(--color-text)' }}>
+                <strong>CBP Rulings:</strong> {activeMod.rulings.map(r => r.id).join(', ')}
+              </span>
+              <div className="flex gap-2">
+                {activeMod.rulings.map(ruling => (
+                  <a
+                    key={ruling.id}
+                    href={ruling.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm font-medium"
+                    style={{ color: 'var(--color-accent)' }}
+                  >
+                    View ↗
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Savings Summary */}
+        <section className="mb-16">
+          <p className="section-label">Potential Savings</p>
+          <div className="card" style={{ background: 'linear-gradient(to bottom right, #f5f5f7, var(--color-card-bg))' }}>
+            <div className="grid grid-cols-3 text-center divide-x" style={{ borderColor: 'var(--color-border)' }}>
+              <div className="px-4">
+                <p className="stat-label">Per Unit</p>
+                <p className="text-3xl font-semibold" style={{ color: 'var(--color-text)' }}>
+                  ${activeMod.savings.perUnit.toFixed(2)}
+                </p>
+              </div>
+              <div className="px-4">
+                <p className="stat-label">At Scale</p>
+                <p className="text-3xl font-semibold" style={{ color: 'var(--color-positive)' }}>
+                  ${activeMod.savings.annual.toLocaleString()}
+                </p>
+              </div>
+              <div className="px-4">
+                <p className="stat-label">Volume</p>
+                <p className="text-3xl font-semibold" style={{ color: 'var(--color-muted)' }}>
+                  10K
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Total Savings - All Opportunities */}
+        {result.opportunities.length > 1 && (
+          <section className="mb-16">
+            <div className="card text-center" style={{ borderLeft: `4px solid var(--color-positive)` }}>
+              <p className="section-label text-center">Combined Annual Savings</p>
+              <p className="text-5xl font-semibold mb-2" style={{ color: 'var(--color-positive)' }}>
+                ${result.totalPotentialSavings.toLocaleString()}
+              </p>
+              <p className="text-sm" style={{ color: 'var(--color-muted)' }}>
+                Implementing all {result.opportunities.length} opportunities @ 10,000 units/year
+              </p>
+            </div>
+          </section>
+        )}
+
+        {/* CTA */}
+        <section className="text-center py-12">
+          <p className="mb-3" style={{ color: 'var(--color-muted)' }}>
+            Want the full tool with live CROSS database?
+          </p>
+          <p className="text-xl font-medium mb-6" style={{ color: 'var(--color-text)' }}>
+            Reply to this newsletter for early access.
+          </p>
+          <p className="text-sm" style={{ color: 'var(--color-muted)' }}>
+            🐀 Rat Links
+          </p>
+        </section>
       </div>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-gray-500 py-8 text-center text-sm border-t border-gray-800">
-        <p className="mb-2">⚖️ Based on public CBP rulings. This is not legal advice.</p>
-        <p>Consult a licensed customs broker before making classification decisions.</p>
+      <footer className="py-8 border-t text-center" style={{ borderColor: 'var(--color-border)' }}>
+        <p className="text-sm" style={{ color: 'var(--color-muted)' }}>
+          Data from{' '}
+          <a
+            href="https://rulings.cbp.gov"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: 'var(--color-accent)' }}
+          >
+            CBP CROSS rulings
+          </a>
+          {' '}· Not legal advice
+        </p>
       </footer>
     </main>
   )

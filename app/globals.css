@@ -3,31 +3,194 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    /* Apple Design System Colors */
+    --color-bg: #fafafa;
+    --color-text: #1d1d1f;
+    --color-muted: #86868b;
+    --color-border: #d2d2d7;
+    --color-accent: #06c;
+    --color-positive: #34c759;
+    --color-negative: #ff3b30;
+    --color-card-bg: #ffffff;
+    --color-card-shadow: rgba(0, 0, 0, 0.04);
+  }
+
   * {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
   body {
-    @apply bg-white text-gray-900;
+    background-color: var(--color-bg);
+    color: var(--color-text);
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  /* Typography */
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--color-text);
+    font-weight: 600;
+  }
+
+  a {
+    color: var(--color-accent);
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+  }
+
+  a:hover {
+    opacity: 0.8;
   }
 }
 
 @layer components {
-  .btn-pill {
-    @apply rounded-pill px-12 py-4 font-medium text-base transition-all duration-200;
+  /* Buttons */
+  .btn {
+    border-radius: 980px;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
   }
 
   .btn-primary {
-    @apply btn-pill bg-apple-blue text-white hover:bg-blue-700 active:scale-95;
+    background-color: var(--color-text);
+    color: #ffffff;
+    padding: 0.875rem 2rem;
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background-color: #333336;
+  }
+
+  .btn-primary:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  .btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 
   .btn-secondary {
-    @apply btn-pill bg-gray-100 text-gray-900 hover:bg-gray-200 active:scale-95;
+    background-color: #ffffff;
+    color: var(--color-text);
+    padding: 0.875rem 2rem;
+    border: 1px solid var(--color-border);
   }
 
+  .btn-secondary:hover:not(:disabled) {
+    background-color: #f5f5f7;
+  }
+
+  .btn-secondary:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  /* Cards */
   .card {
-    @apply bg-white rounded-3xl p-8 shadow-sm;
+    background-color: var(--color-card-bg);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 2px 12px var(--color-card-shadow);
+  }
+
+  /* Input Fields */
+  .input-field {
+    border-radius: 18px;
+    border: 1px solid var(--color-border);
+    padding: 0.875rem 1.25rem;
+    font-size: 1rem;
+    background-color: #ffffff;
+    color: var(--color-text);
+    transition: all 0.2s ease;
+    width: 100%;
+  }
+
+  .input-field:focus {
+    outline: none;
+    border-color: #0071e3;
+    box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1);
+  }
+
+  .input-field::placeholder {
+    color: var(--color-muted);
+  }
+
+  /* Text Styles */
+  .section-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.75rem;
+  }
+
+  .stat-label {
+    font-size: 0.875rem;
+    color: var(--color-muted);
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-text);
+    display: block;
+  }
+
+  /* Focus States */
+  *:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.2);
+    border-radius: 4px;
+  }
+
+  /* Loading Spinner */
+  .spinner {
+    border: 2px solid var(--color-border);
+    border-top-color: var(--color-accent);
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* Transitions */
+  .fade-enter {
+    opacity: 0;
+  }
+
+  .fade-enter-active {
+    opacity: 1;
+    transition: opacity 300ms ease;
+  }
+
+  .fade-exit {
+    opacity: 1;
+  }
+
+  .fade-exit-active {
+    opacity: 0;
+    transition: opacity 300ms ease;
   }
 }
+
+/* Utility Classes */
+.text-accent { color: var(--color-accent); }
+.text-positive { color: var(--color-positive); }
+.text-negative { color: var(--color-negative); }
+.text-muted { color: var(--color-muted); }
+.bg-card { background-color: var(--color-card-bg); }
+.border-default { border-color: var(--color-border); }
