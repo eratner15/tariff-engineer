@@ -171,10 +171,110 @@ tariffengineer.vercel.app`
           </div>
         </div>
 
+        {/* Implementation Roadmap */}
+        {preset.implementation && (
+          <div style={{
+            borderTop: '2px solid var(--color-border)',
+            paddingTop: '2rem',
+            marginTop: '2rem'
+          }}>
+            <div style={{
+              fontSize: '0.8rem',
+              fontWeight: 'bold',
+              marginBottom: '1rem',
+              color: 'var(--color-accent)'
+            }}>
+              📋 IMPLEMENTATION ROADMAP:
+            </div>
+            {preset.implementation.steps.map((step, idx) => (
+              <div key={idx} style={{ marginBottom: '1.5rem' }}>
+                <div style={{
+                  fontSize: '0.75rem',
+                  fontWeight: 'bold',
+                  marginBottom: '0.5rem',
+                  color: 'var(--color-text)'
+                }}>
+                  [{idx + 1}] {step.title}
+                </div>
+                <div style={{ paddingLeft: '1.5rem' }}>
+                  {step.details.map((detail, detailIdx) => (
+                    <div key={detailIdx} style={{
+                      fontSize: '0.7rem',
+                      color: 'var(--color-muted)',
+                      marginBottom: '0.25rem'
+                    }}>
+                      ↳ {detail}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+            {preset.implementation.netSavings && (
+              <div style={{
+                marginTop: '1rem',
+                padding: '0.75rem',
+                backgroundColor: 'rgba(0, 255, 0, 0.05)',
+                border: '1px solid var(--color-positive)',
+                fontSize: '0.75rem',
+                fontWeight: 'bold'
+              }}>
+                NET SAVINGS: {preset.implementation.netSavings}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Real-World Application */}
+        {preset.realWorld && (
+          <div style={{
+            borderTop: '2px solid var(--color-border)',
+            paddingTop: '2rem',
+            marginTop: '2rem'
+          }}>
+            <div style={{
+              fontSize: '0.8rem',
+              fontWeight: 'bold',
+              marginBottom: '1rem',
+              color: 'var(--color-accent)'
+            }}>
+              💼 REAL-WORLD APPLICATION:
+            </div>
+            <div style={{
+              fontSize: '0.75rem',
+              lineHeight: '1.6',
+              color: 'var(--color-text)',
+              marginBottom: '1rem'
+            }}>
+              {preset.realWorld.application}
+            </div>
+            <div style={{
+              padding: '1rem',
+              backgroundColor: 'var(--color-card-bg)',
+              border: '1px solid var(--color-border)',
+              fontSize: '0.7rem',
+              marginBottom: '1rem'
+            }}>
+              <div style={{ marginBottom: '0.5rem' }}>
+                <span style={{ color: 'var(--color-muted)' }}>INDUSTRY IMPACT:</span>{' '}
+                <span style={{ color: 'var(--color-text)' }}>{preset.realWorld.industryImpact}</span>
+              </div>
+              <div style={{ marginBottom: '0.5rem' }}>
+                <span style={{ color: 'var(--color-muted)' }}>SOURCE:</span>{' '}
+                <span style={{ color: 'var(--color-text)' }}>{preset.realWorld.source}</span>
+              </div>
+              <div>
+                <span style={{ color: 'var(--color-muted)' }}>LEGITIMACY:</span>{' '}
+                <span style={{ color: 'var(--color-text)' }}>{preset.realWorld.legitimacy}</span>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Disclaimer */}
         <div style={{
           borderTop: '1px solid var(--color-border)',
           paddingTop: '1rem',
+          marginTop: '2rem',
           fontSize: '0.7rem',
           color: 'var(--color-muted)',
           textAlign: 'center'
