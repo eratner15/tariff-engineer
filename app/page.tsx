@@ -5,24 +5,42 @@ import { useRouter } from 'next/navigation'
 import EmailCaptureModal from '@/components/EmailCaptureModal'
 import ThemeToggle from '@/components/ThemeToggle'
 
-const EXAMPLE_PRODUCTS = [
+const CASE_FILES = [
   {
-    category: 'Footwear',
+    id: 'CASE_6404.11',
+    category: 'FOOTWEAR',
+    status: 'OPTIMIZED',
+    strategy: 'TEXTILE_SOLE_APPLICATION',
+    dutyDelta: '-31.5%',
     description: 'Running shoe with rubber outer sole and synthetic upper, contains embedded fitness tracker, manufactured in Vietnam'
   },
   {
-    category: 'Electronics',
+    id: 'CASE_8517.62',
+    category: 'ELECTRONICS',
+    status: 'WARNING',
+    strategy: 'MODULE_DECOUPLING',
+    rulingRef: 'NY_N31244',
     description: 'Wireless earbuds with charging case, Bluetooth 5.0, silicone ear tips, USB-C charging port'
   },
   {
-    category: 'Bags',
+    id: 'CASE_4202.92',
+    category: 'BAGS',
+    status: 'REVIEWED',
+    strategy: 'MATERIAL_SUBSTITUTION',
+    dutyDelta: '-9.6%',
     description: 'Laptop backpack with padded compartment, water-resistant polyester exterior, leather trim accents'
   },
   {
-    category: 'Wearables',
+    id: 'CASE_9102.11',
+    category: 'WEARABLES',
+    status: 'OPTIMIZED',
+    strategy: 'FUNCTION_RECLASSIFICATION',
+    dutyDelta: 'FREE',
     description: 'Smartwatch with heart rate monitor, GPS, OLED display, silicone band, waterproof to 50m'
   }
 ]
+
+const RULING_IDS = ['NY_N29384', 'HQ_H29384', 'NY_N38472', 'NY_N305891', 'HQ_H301245', 'NY_N308472', 'NY_N307856', 'HQ_H304521', 'NY_N302789', 'NY_N306234']
 
 export default function Home() {
   const [description, setDescription] = useState('')
@@ -32,7 +50,6 @@ export default function Home() {
   const router = useRouter()
 
   useEffect(() => {
-    // Fetch analytics to show product count
     fetch('/api/analytics')
       .then(res => res.json())
       .then(data => setProductsAnalyzed(data.totalSearches || 0))
@@ -41,7 +58,6 @@ export default function Home() {
 
   const handleAnalyze = async () => {
     if (!description.trim()) return
-
     sessionStorage.setItem('productDescription', description)
     setShowEmailModal(true)
   }
@@ -50,8 +66,6 @@ export default function Home() {
     console.log('Email captured:', email)
     setShowEmailModal(false)
     setIsAnalyzing(true)
-
-    // Navigate to results after brief delay
     setTimeout(() => {
       router.push('/results')
     }, 300)
@@ -60,15 +74,13 @@ export default function Home() {
   const handleEmailSkip = () => {
     setShowEmailModal(false)
     setIsAnalyzing(true)
-
-    // Navigate to results after brief delay
     setTimeout(() => {
       router.push('/results')
     }, 300)
   }
 
-  const handleExampleClick = (example: typeof EXAMPLE_PRODUCTS[0]) => {
-    setDescription(example.description)
+  const handleExampleClick = (caseFile: typeof CASE_FILES[0]) => {
+    setDescription(caseFile.description)
   }
 
   return (
@@ -81,271 +93,214 @@ export default function Home() {
 
       <main className="min-h-screen" style={{ backgroundColor: 'var(--color-bg)' }}>
         {/* Theme Toggle */}
-        <div className="fixed top-6 right-6 z-50">
+        <div className="fixed top-4 right-4 z-50">
           <ThemeToggle />
         </div>
 
-        {/* Hero Section */}
-      <div className="max-w-[680px] mx-auto px-6 pt-20 pb-24">
-        {/* Eyebrow */}
-        <p className="text-sm text-muted mb-4 text-center">
-          Rat Links · The Build
-          {productsAnalyzed > 0 && (
-            <span className="ml-3 px-3 py-1 rounded-full" style={{ backgroundColor: '#f5f5f7', color: 'var(--color-text)', fontSize: '11px' }}>
-              {productsAnalyzed.toLocaleString()} products analyzed
-            </span>
-          )}
-        </p>
-
-        {/* Headline */}
-        <h1
-          className="text-6xl md:text-7xl font-semibold text-center mb-6"
-          style={{
-            letterSpacing: '-0.03em',
-            color: 'var(--color-text)'
-          }}
-        >
-          Tariff Engineer
-        </h1>
-
-        {/* Subhead */}
-        <p
-          className="text-xl md:text-2xl text-center mb-16 leading-relaxed"
-          style={{ color: 'var(--color-muted)' }}
-        >
-          The difference between 60% duty and 6% often comes down to product design.
-          Find the loopholes in 10,000 pages of tariff code.
-        </p>
-
-        {/* Product Input Card */}
-        <div className="card mb-8">
-          <label
-            className="block text-sm font-medium mb-4"
-            style={{ color: 'var(--color-text)' }}
-          >
-            Describe your product
-          </label>
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="e.g., Running shoe with rubber outer sole and synthetic upper..."
-            className="input-field resize-none"
-            rows={4}
-          />
-
-          <button
-            onClick={handleAnalyze}
-            disabled={!description.trim() || isAnalyzing}
-            className="btn-primary w-full mt-6"
-          >
-            {isAnalyzing ? 'Analyzing...' : 'Find opportunities'}
-          </button>
-        </div>
-
-        {/* Example Pills */}
-        <div className="text-center">
-          <p className="section-label text-center mb-4">Or try an example:</p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {EXAMPLE_PRODUCTS.map((example) => (
-              <button
-                key={example.category}
-                onClick={() => handleExampleClick(example)}
-                className="btn-secondary py-3 px-4 text-sm"
-              >
-                {example.category}
-              </button>
+        {/* DATA TICKER */}
+        <div className="ticker">
+          <div className="ticker-content">
+            {[...RULING_IDS, ...RULING_IDS].map((id, idx) => (
+              <span key={idx} className="mx-8">
+                RULING_ID: {id} // STATUS: INDEXED
+              </span>
             ))}
           </div>
         </div>
-      </div>
 
-      {/* Value Prop Section */}
-      <div className="py-20" style={{ backgroundColor: '#ffffff' }}>
-        <div className="max-w-[680px] mx-auto px-6 text-center">
-          <div className="mb-16">
-            <div
-              className="text-5xl md:text-6xl font-semibold mb-4"
-              style={{ color: 'var(--color-negative)' }}
-            >
-              37.5%
+        {/* HEADER / SYSTEM INFO */}
+        <div className="border-b" style={{ borderColor: 'var(--color-border)' }}>
+          <div className="max-w-[1200px] mx-auto px-6 py-4 grid grid-cols-3 gap-4">
+            <div className="grid-cell border-0">
+              <div className="text-xs" style={{ color: 'var(--color-muted)' }}>SYSTEM</div>
+              <div className="font-bold text-sm">RAT_LINKS // BUILD</div>
             </div>
-            <div className="text-2xl mb-2" style={{ color: 'var(--color-muted)' }}>
-              →
+            <div className="grid-cell border-0">
+              <div className="text-xs" style={{ color: 'var(--color-muted)' }}>DATABASE</div>
+              <div className="font-bold text-sm">{productsAnalyzed > 0 ? `${productsAnalyzed.toLocaleString()}_QUERIES` : 'ONLINE'}</div>
             </div>
-            <div
-              className="text-5xl md:text-6xl font-semibold mb-4"
-              style={{ color: 'var(--color-positive)' }}
-            >
-              7.5%
+            <div className="grid-cell border-0">
+              <div className="text-xs" style={{ color: 'var(--color-muted)' }}>STATUS</div>
+              <div className="font-bold text-sm" style={{ color: 'var(--color-positive)' }}>OPERATIONAL</div>
             </div>
-            <p className="text-lg" style={{ color: 'var(--color-muted)' }}>
-              Add felt to your sneaker sole. Same shoe. Thirty points of margin.
+          </div>
+        </div>
+
+        {/* HERO SECTION */}
+        <div className="max-w-[1200px] mx-auto px-6 py-16">
+          {/* MAIN HEADLINE */}
+          <div className="mb-12 border-l-4 pl-6" style={{ borderColor: 'var(--color-accent)' }}>
+            <div className="text-xs mb-2" style={{ color: 'var(--color-muted)' }}>
+              PROTOCOL_VERSION: 1.0.0
+            </div>
+            <h1 className="text-5xl md:text-6xl font-bold mb-4" style={{ color: 'var(--color-text)' }}>
+              DUTY_OPTIMIZATION<br/>PROTOCOL // V1
+            </h1>
+            <p className="text-base md:text-lg max-w-3xl" style={{ color: 'var(--color-muted)', textTransform: 'none' }}>
+              Index 10,000+ Customs Rulings. Exploit the 'De Minimis' collapse.<br/>
+              Automate HTS Classification.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-12 text-left">
-            <div>
-              <div className="text-4xl font-semibold mb-3" style={{ color: 'var(--color-text)' }}>
-                10,000+
+          {/* TERMINAL INPUT */}
+          <div className="mb-12 border-2 p-6" style={{ borderColor: 'var(--color-accent)', backgroundColor: 'var(--color-card-bg)' }}>
+            <div className="mb-4">
+              <div className="text-xs mb-2" style={{ color: 'var(--color-accent)' }}>SYSTEM_PROMPT:</div>
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="> Enter product specs (e.g., 'Men's Knit Cotton Shirt, >10 stitches/cm')..."
+                className="w-full bg-transparent border-0 outline-none resize-none font-mono text-sm"
+                style={{ color: 'var(--color-text)', minHeight: '100px' }}
+                rows={4}
+              />
+            </div>
+            <div className="flex justify-between items-center border-t pt-4" style={{ borderColor: 'var(--color-border)' }}>
+              <div className="text-xs" style={{ color: 'var(--color-muted)' }}>
+                [{description.length}/1000 CHARS]
               </div>
-              <p style={{ color: 'var(--color-muted)' }}>
-                Public CBP rulings. The precedents exist. We make them usable.
-              </p>
+              <button
+                onClick={handleAnalyze}
+                disabled={!description.trim() || isAnalyzing}
+                className="btn-primary"
+              >
+                {isAnalyzing ? '[PROCESSING...]' : '[RUN_AUDIT]'}
+              </button>
+            </div>
+          </div>
+
+          {/* CASE FILE EXAMPLES */}
+          <div>
+            <div className="text-xs mb-4" style={{ color: 'var(--color-muted)' }}>
+              REFERENCE_CASES // SELECT_TO_LOAD:
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {CASE_FILES.map((caseFile) => (
+                <button
+                  key={caseFile.id}
+                  onClick={() => handleExampleClick(caseFile)}
+                  className="log-entry text-left snap-transition"
+                >
+                  <div className="flex justify-between mb-2">
+                    <span style={{ color: 'var(--color-accent)' }}>{caseFile.id}</span>
+                    <span style={{ color: caseFile.status === 'OPTIMIZED' ? 'var(--color-positive)' : caseFile.status === 'WARNING' ? 'var(--color-warning)' : 'var(--color-text)' }}>
+                      [{caseFile.status}]
+                    </span>
+                  </div>
+                  <div className="mb-1">
+                    STRATEGY: <span style={{ color: 'var(--color-text)' }}>{caseFile.strategy}</span>
+                  </div>
+                  {caseFile.dutyDelta && (
+                    <div className="mb-1">
+                      DUTY_DELTA: <span style={{ color: 'var(--color-positive)' }}>{caseFile.dutyDelta}</span>
+                    </div>
+                  )}
+                  {caseFile.rulingRef && (
+                    <div>
+                      RULING_REF: <span style={{ color: 'var(--color-accent)' }}>{caseFile.rulingRef}</span>
+                    </div>
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* STATS GRID */}
+        <div className="border-t border-b grid-layout" style={{ borderColor: 'var(--color-border)' }}>
+          <div className="max-w-[1200px] mx-auto grid grid-cols-3">
+            <div className="grid-cell">
+              <div className="stat-label">DUTY_REDUCTION</div>
+              <div className="stat-value" style={{ color: 'var(--color-negative)' }}>37.5%</div>
+              <div className="text-xs mt-1" style={{ color: 'var(--color-muted)' }}>→</div>
+              <div className="stat-value" style={{ color: 'var(--color-positive)' }}>7.5%</div>
+              <div className="text-xs mt-2" style={{ color: 'var(--color-muted)' }}>
+                FELT_SOLE_MOD
+              </div>
+            </div>
+            <div className="grid-cell">
+              <div className="stat-label">INDEX_SIZE</div>
+              <div className="stat-value">10,000+</div>
+              <div className="text-xs mt-2" style={{ color: 'var(--color-muted)' }}>
+                PUBLIC_CBP_RULINGS
+              </div>
+            </div>
+            <div className="grid-cell border-r-0">
+              <div className="stat-label">PROCESSING_TIME</div>
+              <div className="stat-value">120s</div>
+              <div className="text-xs mt-2" style={{ color: 'var(--color-muted)' }}>
+                AVG_QUERY_DURATION
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* SYSTEM OPERATIONS */}
+        <div className="max-w-[1200px] mx-auto px-6 py-16">
+          <div className="text-xs mb-6" style={{ color: 'var(--color-muted)' }}>
+            PROCESS_FLOW:
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+              <div className="text-sm font-bold mb-2" style={{ color: 'var(--color-accent)' }}>
+                [01] INPUT_PARSING
+              </div>
+              <div className="text-xs" style={{ color: 'var(--color-muted)', lineHeight: '1.6' }}>
+                MATERIALS // COMPONENTS // INTENDED_USE<br/>
+                AUTOMATED_COMPLEXITY_HANDLING
+              </div>
+            </div>
+
+            <div>
+              <div className="text-sm font-bold mb-2" style={{ color: 'var(--color-accent)' }}>
+                [02] PRECEDENT_ANALYSIS
+              </div>
+              <div className="text-xs" style={{ color: 'var(--color-muted)', lineHeight: '1.6' }}>
+                SCAN_10K_CBP_RULINGS<br/>
+                IDENTIFY_LEGAL_ENGINEERING_OPS
+              </div>
+            </div>
+
+            <div>
+              <div className="text-sm font-bold mb-2" style={{ color: 'var(--color-accent)' }}>
+                [03] OUTPUT_GENERATION
+              </div>
+              <div className="text-xs" style={{ color: 'var(--color-muted)', lineHeight: '1.6' }}>
+                SPECIFIC_MODS // NEW_DUTY_RATES<br/>
+                ROI_PROJECTIONS // SUPPORTING_RULINGS
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* SYSTEM ACCESS CTA */}
+        <div className="border-t border-b py-12" style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-card-bg)' }}>
+          <div className="max-w-[1200px] mx-auto px-6 text-center">
+            <div className="text-xs mb-3" style={{ color: 'var(--color-muted)' }}>
+              SYSTEM_ACCESS // FULL_DATABASE
+            </div>
+            <div className="text-xl font-bold mb-4" style={{ color: 'var(--color-text)' }}>
+              REQUEST_ACCESS_KEY<br/>
+              VIA NEWSLETTER_RESPONSE
+            </div>
+            <div className="text-xs" style={{ color: 'var(--color-muted)' }}>
+              🐀 RAT_LINKS // THE_BUILD
+            </div>
+          </div>
+        </div>
+
+        {/* FOOTER */}
+        <footer className="border-t py-6" style={{ borderColor: 'var(--color-border)' }}>
+          <div className="max-w-[1200px] mx-auto px-6 flex justify-between items-center text-xs" style={{ color: 'var(--color-muted)' }}>
+            <div>
+              DATA_SOURCE: <a href="https://rulings.cbp.gov" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-accent)' }}>CBP_CROSS_RULINGS</a>
             </div>
             <div>
-              <div className="text-4xl font-semibold mb-3" style={{ color: 'var(--color-text)' }}>
-                2 minutes
-              </div>
-              <p style={{ color: 'var(--color-muted)' }}>
-                From product description to engineering opportunities.
-              </p>
+              DISCLAIMER: NOT_LEGAL_ADVICE
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* How It Works */}
-      <div className="py-20 max-w-[680px] mx-auto px-6">
-        <h2 className="text-3xl font-semibold text-center mb-16" style={{ color: 'var(--color-text)' }}>
-          How it works
-        </h2>
-
-        <div className="space-y-12">
-          <div>
-            <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--color-text)' }}>
-              Describe your product
-            </h3>
-            <p style={{ color: 'var(--color-muted)' }}>
-              Materials, components, intended use. We handle the complexity.
-            </p>
-          </div>
-
-          <div>
-            <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--color-text)' }}>
-              We analyze precedents
-            </h3>
-            <p style={{ color: 'var(--color-muted)' }}>
-              Search 10,000+ CBP rulings for legal tariff engineering opportunities.
-            </p>
-          </div>
-
-          <div>
-            <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--color-text)' }}>
-              Get actionable strategies
-            </h3>
-            <p style={{ color: 'var(--color-muted)' }}>
-              Specific modifications, new duty rates, ROI projections, supporting rulings.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Comparison Table */}
-      <div className="py-20" style={{ backgroundColor: '#ffffff' }}>
-        <div className="max-w-[880px] mx-auto px-6">
-          <h2 className="text-3xl font-semibold text-center mb-12" style={{ color: 'var(--color-text)' }}>
-            Why Tariff Engineer?
-          </h2>
-
-          <div className="overflow-x-auto">
-            <table className="w-full" style={{ borderCollapse: 'separate', borderSpacing: '0 12px' }}>
-              <thead>
-                <tr>
-                  <th className="text-left py-4 px-6" style={{ color: 'var(--color-muted)' }}>
-                    <span className="text-sm font-medium">Feature</span>
-                  </th>
-                  <th className="text-center py-4 px-6" style={{ backgroundColor: '#f5f5f7', borderRadius: '12px 12px 0 0' }}>
-                    <span className="text-sm font-semibold" style={{ color: 'var(--color-accent)' }}>Tariff Engineer</span>
-                  </th>
-                  <th className="text-center py-4 px-6" style={{ color: 'var(--color-muted)' }}>
-                    <span className="text-sm font-medium">Customs Broker</span>
-                  </th>
-                  <th className="text-center py-4 px-6" style={{ color: 'var(--color-muted)' }}>
-                    <span className="text-sm font-medium">Manual Research</span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="py-4 px-6" style={{ color: 'var(--color-text)' }}>Analysis Speed</td>
-                  <td className="text-center py-4 px-6" style={{ backgroundColor: '#f5f5f7' }}>
-                    <strong style={{ color: 'var(--color-positive)' }}>2 minutes</strong>
-                  </td>
-                  <td className="text-center py-4 px-6" style={{ color: 'var(--color-muted)' }}>2-4 weeks</td>
-                  <td className="text-center py-4 px-6" style={{ color: 'var(--color-muted)' }}>Days</td>
-                </tr>
-                <tr>
-                  <td className="py-4 px-6" style={{ color: 'var(--color-text)' }}>Cost</td>
-                  <td className="text-center py-4 px-6" style={{ backgroundColor: '#f5f5f7' }}>
-                    <strong style={{ color: 'var(--color-positive)' }}>Free demo</strong>
-                  </td>
-                  <td className="text-center py-4 px-6" style={{ color: 'var(--color-muted)' }}>$2K-10K</td>
-                  <td className="text-center py-4 px-6" style={{ color: 'var(--color-muted)' }}>Your time</td>
-                </tr>
-                <tr>
-                  <td className="py-4 px-6" style={{ color: 'var(--color-text)' }}>Ruling Database</td>
-                  <td className="text-center py-4 px-6" style={{ backgroundColor: '#f5f5f7' }}>
-                    <strong style={{ color: 'var(--color-positive)' }}>10,000+ rulings</strong>
-                  </td>
-                  <td className="text-center py-4 px-6" style={{ color: 'var(--color-muted)' }}>Limited</td>
-                  <td className="text-center py-4 px-6" style={{ color: 'var(--color-muted)' }}>Manual</td>
-                </tr>
-                <tr>
-                  <td className="py-4 px-6" style={{ color: 'var(--color-text)' }}>Engineering Ideas</td>
-                  <td className="text-center py-4 px-6" style={{ backgroundColor: '#f5f5f7' }}>
-                    <strong style={{ color: 'var(--color-positive)' }}>3-5 options</strong>
-                  </td>
-                  <td className="text-center py-4 px-6" style={{ color: 'var(--color-muted)' }}>1-2 options</td>
-                  <td className="text-center py-4 px-6" style={{ color: 'var(--color-muted)' }}>Limited</td>
-                </tr>
-                <tr>
-                  <td className="py-4 px-6" style={{ color: 'var(--color-text)' }}>PDF Reports</td>
-                  <td className="text-center py-4 px-6" style={{ backgroundColor: '#f5f5f7', borderRadius: '0 0 12px 12px' }}>
-                    <strong style={{ color: 'var(--color-positive)' }}>✓</strong>
-                  </td>
-                  <td className="text-center py-4 px-6" style={{ color: 'var(--color-muted)' }}>✓</td>
-                  <td className="text-center py-4 px-6" style={{ color: 'var(--color-muted)' }}>—</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <p className="text-center mt-8 text-sm" style={{ color: 'var(--color-muted)' }}>
-            * Tariff Engineer provides automated analysis. Always consult a licensed customs broker before implementing changes.
-          </p>
-        </div>
-      </div>
-
-      {/* CTA Section */}
-      <div className="py-20" style={{ backgroundColor: '#ffffff' }}>
-        <div className="max-w-[680px] mx-auto px-6 text-center">
-          <p className="text-lg mb-3" style={{ color: 'var(--color-muted)' }}>
-            Want the full tool with live CROSS database?
-          </p>
-          <p className="text-xl font-medium mb-4" style={{ color: 'var(--color-text)' }}>
-            Reply to this newsletter for early access.
-          </p>
-          <p className="text-sm" style={{ color: 'var(--color-muted)' }}>
-            🐀 Rat Links
-          </p>
-        </div>
-      </div>
-
-      {/* Footer */}
-      <footer className="py-8 border-t text-center" style={{ borderColor: 'var(--color-border)' }}>
-        <p className="text-sm" style={{ color: 'var(--color-muted)' }}>
-          Data from{' '}
-          <a
-            href="https://rulings.cbp.gov"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: 'var(--color-accent)' }}
-          >
-            CBP CROSS rulings
-          </a>
-          {' '}· Not legal advice
-        </p>
-      </footer>
+        </footer>
       </main>
     </>
   )
