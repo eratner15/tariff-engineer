@@ -5,6 +5,7 @@ import Terminal from '@/app/components/Terminal'
 import PresetButtons from '@/app/components/PresetButtons'
 import ScanAnimation, { ScanMessage } from '@/app/components/ScanAnimation'
 import Receipt from '@/app/components/Receipt'
+import LiveCounter from '@/app/components/LiveCounter'
 import ThemeToggle from '@/components/ThemeToggle'
 import presets from '@/app/data/presets.json'
 import { generateScanMessages, generateGenericScanMessages } from '@/app/lib/scanMessages'
@@ -113,6 +114,9 @@ export default function Home() {
             The difference between 37.5% and 7.5% is one design change.
           </p>
         </div>
+
+        {/* LIVE COUNTER */}
+        <LiveCounter />
 
         {/* PRESET BUTTONS */}
         <PresetButtons onSelect={handlePresetSelect} />
@@ -235,6 +239,73 @@ export default function Home() {
                 PRINT_AUDIT_REPORT
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* FAQ SECTION */}
+      <div className="border-t py-16" style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-card-bg)' }}>
+        <div className="max-w-[1200px] mx-auto px-6">
+          <div className="text-xs mb-8" style={{ color: 'var(--color-muted)' }}>
+            FREQUENTLY_ASKED_QUESTIONS:
+          </div>
+
+          <div style={{ display: 'grid', gap: '1.5rem' }}>
+            {[
+              {
+                q: "Is this legal?",
+                a: "Yes. Tariff engineering is the legal practice of modifying product design to qualify for lower duty rates under existing HTS classifications. All strategies shown reference actual CBP rulings and are used by Fortune 500 companies. However, you must work with a licensed customs broker to ensure proper implementation and compliance."
+              },
+              {
+                q: "Do I need a customs broker?",
+                a: "Strongly recommended. While you can research classifications yourself, a licensed customs broker ensures legal compliance, handles documentation, and represents you with CBP. They typically cost $150-500 per classification request but save you from costly mistakes and potential audits."
+              },
+              {
+                q: "How do I actually implement this?",
+                a: "Each strategy includes an Implementation Roadmap with specific steps. Typically: (1) Coordinate design modification with your manufacturer, (2) Document the changes clearly, (3) File HTS classification request with your customs broker referencing the precedent ruling, (4) Wait for CBP approval (30-45 days), (5) Begin importing under new classification."
+              },
+              {
+                q: "What if CBP challenges my classification?",
+                a: "If you've properly documented your modification and can prove it meets the criteria in the precedent ruling, CBP will typically accept it. If challenged, your customs broker will represent you and provide supporting evidence. The rulings shown here are precedential, meaning they carry legal weight. Keep detailed records of your product design and reference the specific ruling number."
+              },
+              {
+                q: "Can I use this for dropshipping?",
+                a: "Yes, if you control product specifications with your supplier. Most strategies require design modifications, so you need a manufacturer willing to implement changes. For existing products, you're limited to classification research. For custom products, you can engineer the design from the start to qualify for lower rates."
+              },
+              {
+                q: "Why are some strategies marked as 'closed'?",
+                a: "Tariff strategies evolve. CBP occasionally closes loopholes through rule changes (like the Ford 'Chicken Tax' workaround in 2019). We show historical examples for educational purposes and to demonstrate how tariff engineering strategies work. Always verify current regulations with your customs broker."
+              }
+            ].map((faq, idx) => (
+              <details key={idx} style={{
+                border: '1px solid var(--color-border)',
+                padding: '1rem',
+                backgroundColor: 'var(--color-bg)',
+                cursor: 'pointer'
+              }}>
+                <summary style={{
+                  fontFamily: 'monospace',
+                  fontSize: '0.85rem',
+                  fontWeight: 'bold',
+                  color: 'var(--color-text)',
+                  cursor: 'pointer',
+                  userSelect: 'none'
+                }}>
+                  Q: {faq.q}
+                </summary>
+                <div style={{
+                  marginTop: '1rem',
+                  paddingTop: '1rem',
+                  borderTop: '1px solid var(--color-border)',
+                  fontSize: '0.8rem',
+                  lineHeight: '1.6',
+                  color: 'var(--color-muted)',
+                  fontFamily: 'monospace'
+                }}>
+                  A: {faq.a}
+                </div>
+              </details>
+            ))}
           </div>
         </div>
       </div>
