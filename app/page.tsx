@@ -119,11 +119,34 @@ export default function Home() {
 
         {/* TERMINAL INPUT */}
         <div className="mb-12">
+          <div style={{
+            marginBottom: '1rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem'
+          }}>
+            <div style={{
+              fontSize: '0.8rem',
+              fontWeight: 'bold',
+              color: 'var(--color-accent)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.1em'
+            }}>
+              → ENTER PRODUCT DESCRIPTION:
+            </div>
+            <div style={{
+              fontSize: '0.7rem',
+              color: 'var(--color-muted)',
+              fontStyle: 'italic'
+            }}>
+              (or select a preset above)
+            </div>
+          </div>
           <Terminal
             value={input}
             onChange={setInput}
             onSubmit={handleSubmit}
-            placeholder="Type product description or select a preset above..."
+            placeholder="Type here and press ENTER..."
             ghostText={input === '' ? '(e.g., running shoe with rubber sole)' : undefined}
           />
           <div className="flex justify-between items-center mt-4">

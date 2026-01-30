@@ -38,14 +38,28 @@ export default function Terminal({ value, onChange, onSubmit, placeholder, ghost
       className="terminal-container"
       onClick={handleClick}
       style={{
-        border: '1px solid var(--color-border)',
+        border: '3px solid var(--color-accent)',
         padding: '1.5rem',
-        backgroundColor: 'var(--color-card-bg)',
+        backgroundColor: '#000000',
         fontFamily: 'monospace',
-        cursor: 'text'
+        cursor: 'text',
+        boxShadow: '0 0 20px rgba(255, 255, 255, 0.1)',
+        transition: 'all 0.2s ease'
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.boxShadow = '0 0 30px rgba(255, 255, 255, 0.2)'
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.boxShadow = '0 0 20px rgba(255, 255, 255, 0.1)'
       }}
     >
-      <div className="terminal-prompt" style={{ color: 'var(--color-muted)', marginBottom: '0.5rem', fontSize: '0.75rem' }}>
+      <div className="terminal-prompt" style={{
+        color: 'var(--color-accent)',
+        marginBottom: '0.75rem',
+        fontSize: '0.85rem',
+        fontWeight: 'bold',
+        letterSpacing: '0.05em'
+      }}>
         ROOT@CROSS-DATABASE:~$
       </div>
       <div style={{ position: 'relative' }}>
