@@ -76,9 +76,10 @@ export default function Terminal({ value, onChange, onSubmit, placeholder, ghost
             background: 'transparent',
             border: 'none',
             outline: 'none',
-            color: 'var(--color-text)',
+            color: '#ffffff',
             fontFamily: 'monospace',
-            fontSize: '0.95rem',
+            fontSize: '1rem',
+            fontWeight: '500',
             padding: 0,
           }}
           autoComplete="off"

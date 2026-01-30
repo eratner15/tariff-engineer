@@ -16,12 +16,12 @@ export default function PresetButtons({ onSelect }: PresetButtonsProps) {
         textTransform: 'uppercase',
         letterSpacing: '0.1em'
       }}>
-        QUICK_RUN // FAMOUS_HACKS:
+        QUICK_RUN // FAMOUS_HACKS ({presets.length} SCENARIOS):
       </div>
       <div style={{
-        display: 'flex',
-        gap: '1rem',
-        flexWrap: 'wrap'
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+        gap: '0.75rem'
       }}>
         {presets.map((preset) => (
           <button
@@ -32,14 +32,15 @@ export default function PresetButtons({ onSelect }: PresetButtonsProps) {
               backgroundColor: 'transparent',
               border: '1px solid var(--color-border)',
               color: 'var(--color-text)',
-              padding: '0.75rem 1.5rem',
+              padding: '0.75rem 1rem',
               fontFamily: 'monospace',
-              fontSize: '0.75rem',
+              fontSize: '0.7rem',
               fontWeight: 700,
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
               cursor: 'pointer',
-              transition: 'all 0.15s ease'
+              transition: 'all 0.15s ease',
+              textAlign: 'center'
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.backgroundColor = 'var(--color-text)'

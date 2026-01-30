@@ -346,3 +346,13 @@
     font-size: 0.8rem !important;
   }
 }
+
+/* Terminal input placeholder styling */
+.terminal-input::placeholder {
+  color: #666666 !important;
+  opacity: 1 !important;
+}
+
+.terminal-input:focus::placeholder {
+  color: #999999 !important;
+}
