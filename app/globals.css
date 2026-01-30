@@ -4,16 +4,16 @@
 
 @layer base {
   :root {
-    /* RAT LINKS BRUTALIST DESIGN SYSTEM */
+    /* TERMINAL DESIGN SYSTEM - WHITE/GRAY ON BLACK */
     --color-bg: #0a0a0a;
     --color-text: #f0f0f0;
-    --color-muted: #808080;
+    --color-muted: #999999;
     --color-border: #333333;
-    --color-accent: #ff4d00;
+    --color-accent: #ffffff;
     --color-positive: #00ff00;
     --color-negative: #ff0000;
     --color-card-bg: #0f0f0f;
-    --color-warning: #ffff00;
+    --color-warning: #ffaa00;
   }
 
   :root[data-theme='light'] {
@@ -282,3 +282,67 @@
 .text-muted { color: var(--color-muted); }
 .bg-card { background-color: var(--color-card-bg); }
 .border-default { border-color: var(--color-border); }
+
+/* MOBILE RESPONSIVE STYLES */
+@media (max-width: 640px) {
+  /* Reduce heading sizes on mobile */
+  h1 {
+    font-size: 2.25rem !important; /* down from 3-3.75rem */
+    line-height: 1.2;
+  }
+
+  /* Terminal and receipt container adjustments */
+  .terminal-container,
+  .receipt-container {
+    font-size: 0.75rem !important;
+    padding: 1rem !important;
+  }
+
+  /* Receipt ASCII art - reduce font size for narrow screens */
+  .receipt-container pre {
+    font-size: 0.65rem !important;
+    overflow-x: auto;
+  }
+
+  /* Preset buttons - stack vertically on mobile */
+  .preset-buttons-container > div {
+    flex-direction: column !important;
+  }
+
+  .preset-button {
+    width: 100% !important;
+  }
+
+  /* Stats grid - single column on mobile */
+  .grid-cols-3 {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Button groups - stack on mobile */
+  .flex.gap-1rem {
+    flex-direction: column !important;
+  }
+
+  /* Ensure buttons are touch-friendly (44px minimum) */
+  button, .btn, .btn-primary, .btn-secondary {
+    min-height: 44px !important;
+    padding: 0.75rem 1rem !important;
+  }
+
+  /* Scan animation text - slightly smaller */
+  .scan-log {
+    font-size: 0.8rem !important;
+    padding: 1rem !important;
+  }
+}
+
+/* Tablet responsive (641px - 1024px) */
+@media (min-width: 641px) and (max-width: 1024px) {
+  h1 {
+    font-size: 3rem !important;
+  }
+
+  .receipt-container {
+    font-size: 0.8rem !important;
+  }
+}

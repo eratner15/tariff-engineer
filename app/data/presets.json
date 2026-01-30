@@ -1,0 +1,69 @@
+[
+  {
+    "id": "nike-hack",
+    "name": "THE NIKE HACK",
+    "category": "FOOTWEAR",
+    "input": "Athletic running shoe with rubber outer sole and synthetic upper",
+    "current": {
+      "hts": "6402.91.50",
+      "description": "Footwear with rubber/plastic soles",
+      "rate": "37.5%"
+    },
+    "hack": {
+      "modification": "Add 51% textile (felt) coverage to outer sole surface",
+      "newHts": "6404.11.90",
+      "newRate": "7.5%",
+      "ruling": "NY N293844",
+      "rulingUrl": "https://rulings.cbp.gov/ruling/N293844",
+      "savings": "30% duty reduction"
+    },
+    "perUnit": "$14.50",
+    "atScale": "$725,000 per 50K units",
+    "chapter": "64"
+  },
+  {
+    "id": "apple-hack",
+    "name": "THE APPLE HACK",
+    "category": "WEARABLES",
+    "input": "Smart watch with heart rate monitor, GPS, and cellular connectivity",
+    "current": {
+      "hts": "9102.12.80",
+      "description": "Wrist watches with opto-electronic display",
+      "rate": "6.25% + 51¢/unit"
+    },
+    "hack": {
+      "modification": "Remove cellular modem, sell as separate clip-on accessory",
+      "newHts": "8517.62.00 (modem) + 9102.12.80 (watch)",
+      "newRate": "0% (modem) + reduced base (watch)",
+      "ruling": "NY N305891",
+      "rulingUrl": "https://rulings.cbp.gov/ruling/N305891",
+      "savings": "Cellular component enters duty-free"
+    },
+    "perUnit": "$3.76",
+    "atScale": "$282,000 per 75K units",
+    "chapter": "91"
+  },
+  {
+    "id": "ford-hack",
+    "name": "THE FORD HACK",
+    "category": "VEHICLES",
+    "input": "Cargo van for commercial delivery use",
+    "current": {
+      "hts": "8704.21.00",
+      "description": "Motor vehicles for transport of goods (Chicken Tax)",
+      "rate": "25%"
+    },
+    "hack": {
+      "modification": "Import as passenger vehicle with rear seats, remove seats after entry",
+      "newHts": "8703.23.00",
+      "newRate": "2.5%",
+      "ruling": "Customs Court precedent (later closed)",
+      "rulingUrl": "https://rulings.cbp.gov",
+      "savings": "22.5% duty reduction (historical exploit, now patched)"
+    },
+    "perUnit": "$4,500",
+    "atScale": "$45M per 10K vehicles",
+    "chapter": "87",
+    "note": "⚠️ This loophole was closed in 2019. Shown for educational purposes."
+  }
+]
