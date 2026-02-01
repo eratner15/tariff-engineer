@@ -8,8 +8,7 @@ import Receipt from '@/app/components/Receipt'
 import LiveCounter from '@/app/components/LiveCounter'
 import ThemeToggle from '@/components/ThemeToggle'
 import { generateScanMessages, generateGenericScanMessages } from '@/app/lib/scanMessages'
-import allStrategies from '@/../public/strategies.json'
-import fallbackPresets from '@/app/data/presets.json'
+import allStrategies from '@/app/data/all-strategies.json'
 
 type AuditState =
   | { status: 'idle' }

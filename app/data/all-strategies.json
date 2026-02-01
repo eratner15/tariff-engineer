@@ -1,0 +1,721 @@
+[
+  {
+    "id": "strategy-1",
+    "name": "THE NIKE HACK",
+    "category": "FOOTWEAR",
+    "input": "the nike hack",
+    "current": {
+      "hts": "6402.91.50",
+      "description": "From 6402.91.50",
+      "rate": "37.5%"
+    },
+    "hack": {
+      "modification": "Add 51% textile (felt) coverage to outer sole surface",
+      "newHts": "6404.11.90",
+      "newRate": "7.5%",
+      "ruling": "N293844",
+      "rulingUrl": "https://rulings.cbp.gov/ruling/N293844",
+      "savings": "30% duty reduction"
+    },
+    "chapter": "64"
+  },
+  {
+    "id": "strategy-9",
+    "name": "ATHLETIC SHOE → SLIPPER (UPPER MATERIAL)",
+    "category": "FOOTWEAR",
+    "input": "athletic shoe   slipper  upper material",
+    "current": {
+      "hts": "6402.91.50",
+      "description": "From 6402.91.50",
+      "rate": "37.5%"
+    },
+    "hack": {
+      "modification": "Modify upper to use predominantly textile materials, ensure fits definition of \"slipper\"",
+      "newHts": "6404.19.20",
+      "newRate": "7.5%",
+      "ruling": "N293844",
+      "rulingUrl": "https://rulings.cbp.gov/ruling/N293844",
+      "savings": "30% duty reduction"
+    },
+    "chapter": "64"
+  },
+  {
+    "id": "strategy-3",
+    "name": "THE FORD HACK",
+    "category": "VEHICLES",
+    "input": "the ford hack",
+    "current": {
+      "hts": "8704.21.00",
+      "description": "From 8704.21.00",
+      "rate": "25%"
+    },
+    "hack": {
+      "modification": "Import as passenger vehicle with rear seats, remove seats after entry",
+      "newHts": "8703.23.00",
+      "newRate": "2.5%",
+      "ruling": "See database",
+      "savings": "22.5% duty reduction"
+    },
+    "chapter": "87"
+  },
+  {
+    "id": "strategy-35",
+    "name": "GENERAL BAG → GOLF BAG",
+    "category": "SPORTS",
+    "input": "general bag   golf bag",
+    "current": {
+      "hts": "4202.92.90",
+      "description": "From 4202.92.90",
+      "rate": "20%"
+    },
+    "hack": {
+      "modification": "Design specifically for golf equipment with dividers",
+      "newHts": "9506.39.00",
+      "newRate": "4.6%",
+      "ruling": "N296543",
+      "rulingUrl": "https://rulings.cbp.gov/ruling/N296543",
+      "savings": "15.4% duty reduction"
+    },
+    "chapter": "42"
+  },
+  {
+    "id": "strategy-20",
+    "name": "LUGGAGE WITH WHEELS → WHEELED BIN",
+    "category": "BAGS",
+    "input": "luggage with wheels   wheeled bin",
+    "current": {
+      "hts": "4202.12.80",
+      "description": "From 4202.12.80",
+      "rate": "20%"
+    },
+    "hack": {
+      "modification": "Remove travel-specific features, focus on storage/organization",
+      "newHts": "3926.90.99",
+      "newRate": "5.3%",
+      "ruling": "N292156",
+      "rulingUrl": "https://rulings.cbp.gov/ruling/N292156",
+      "savings": "14.7% duty reduction"
+    },
+    "chapter": "42"
+  },
+  {
+    "id": "strategy-22",
+    "name": "WOVEN JACKET → KNIT JACKET",
+    "category": "APPAREL",
+    "input": "woven jacket   knit jacket",
+    "current": {
+      "hts": "6201.93.30",
+      "description": "From 6201.93.30",
+      "rate": "27.7%"
+    },
+    "hack": {
+      "modification": "Change fabric construction from woven to knit",
+      "newHts": "6110.30.30",
+      "newRate": "14.9%",
+      "ruling": "N297654",
+      "rulingUrl": "https://rulings.cbp.gov/ruling/N297654",
+      "savings": "12.8% duty reduction"
+    },
+    "chapter": "62"
+  },
+  {
+    "id": "strategy-23",
+    "name": "PANTS → SHORTS (LENGTH)",
+    "category": "APPAREL",
+    "input": "pants   shorts  length",
+    "current": {
+      "hts": "6203.43.40",
+      "description": "From 6203.43.40",
+      "rate": "16.6%"
+    },
+    "hack": {
+      "modification": "Reduce inseam length to shorts threshold",
+      "newHts": "6203.43.40",
+      "newRate": "8.5%",
+      "ruling": "N299123",
+      "rulingUrl": "https://rulings.cbp.gov/ruling/N299123",
+      "savings": "8.1% duty reduction"
+    },
+    "chapter": "62"
+  },
+  {
+    "id": "strategy-2",
+    "name": "THE APPLE HACK",
+    "category": "WEARABLES",
+    "input": "the apple hack",
+    "current": {
+      "hts": "9102.12.80",
+      "description": "From 9102.12.80",
+      "rate": "6.25% + 51¢/unit"
+    },
+    "hack": {
+      "modification": "Remove cellular modem, sell as separate clip-on accessory",
+      "newHts": "8517.62.00 (modem) + 9102.12.80 (watch)",
+      "newRate": "0% (modem) + reduced base (watch)",
+      "ruling": "N305891",
+      "rulingUrl": "https://rulings.cbp.gov/ruling/N305891",
+      "savings": "6.25% duty reduction"
+    },
+    "chapter": "91"
+  },
+  {
+    "id": "strategy-36",
+    "name": "EXERCISE EQUIPMENT → REHABILITATION DEVICE",
+    "category": "SPORTS",
+    "input": "exercise equipment   rehabilitation device",
+    "current": {
+      "hts": "9506.91.00",
+      "description": "From 9506.91.00",
+      "rate": "4%"
+    },
+    "hack": {
+      "modification": "Add therapeutic features and medical positioning",
+      "newHts": "9019.10.20",
+      "newRate": "Free",
+      "ruling": "N302345",
+      "rulingUrl": "https://rulings.cbp.gov/ruling/N302345",
+      "savings": "4% duty reduction"
+    },
+    "chapter": "95"
+  },
+  {
+    "id": "strategy-5",
+    "name": "THE HANDBAG HACK",
+    "category": "BAGS",
+    "input": "the handbag hack",
+    "current": {
+      "hts": "4202.21.60",
+      "description": "From 4202.21.60",
+      "rate": "10%"
+    },
+    "hack": {
+      "modification": "Use 51% textile exterior surface with leather trim instead of all-leather",
+      "newHts": "4202.22.45",
+      "newRate": "6.3%",
+      "ruling": "N289567",
+      "rulingUrl": "https://rulings.cbp.gov/ruling/N289567",
+      "savings": "3.7% duty reduction"
+    },
+    "chapter": "42"
+  },
+  {
+    "id": "strategy-18",
+    "name": "LEATHER HANDBAG → TEXTILE HANDBAG",
+    "category": "BAGS",
+    "input": "leather handbag   textile handbag",
+    "current": {
+      "hts": "4202.21.60",
+      "description": "From 4202.21.60",
+      "rate": "10%"
+    },
+    "hack": {
+      "modification": "Switch outer surface from leather to textile (nylon, polyester, canvas)",
+      "newHts": "4202.22.45",
+      "newRate": "6.3%",
+      "ruling": "N289567",
+      "rulingUrl": "https://rulings.cbp.gov/ruling/N289567",
+      "savings": "3.7% duty reduction"
+    },
+    "chapter": "42"
+  },
+  {
+    "id": "strategy-21",
+    "name": "COTTON T-SHIRT → PERFORMANCE ATHLETIC SHIRT",
+    "category": "APPAREL",
+    "input": "cotton t shirt   performance athletic shirt",
+    "current": {
+      "hts": "6109.10.00",
+      "description": "From 6109.10.00",
+      "rate": "16.5%"
+    },
+    "hack": {
+      "modification": "Use synthetic moisture-wicking fabric, knit construction",
+      "newHts": "6114.30.30",
+      "newRate": "13.2%",
+      "ruling": "N295743",
+      "rulingUrl": "https://rulings.cbp.gov/ruling/N295743",
+      "savings": "3.3% duty reduction"
+    },
+    "chapter": "61"
+  },
+  {
+    "id": "strategy-7",
+    "name": "THE APPAREL HACK",
+    "category": "APPAREL",
+    "input": "the apparel hack",
+    "current": {
+      "hts": "6205.20.20",
+      "description": "From 6205.20.20",
+      "rate": "19.7%"
+    },
+    "hack": {
+      "modification": "Use knit fabric instead of woven, maintain same appearance",
+      "newHts": "6105.10.00",
+      "newRate": "16.5%",
+      "ruling": "N295743",
+      "rulingUrl": "https://rulings.cbp.gov/ruling/N295743",
+      "savings": "3.1999999999999993% duty reduction"
+    },
+    "chapter": "62"
+  },
+  {
+    "id": "strategy-32",
+    "name": "GLASS CONTAINER → PLASTIC CONTAINER",
+    "category": "HOME",
+    "input": "glass container   plastic container",
+    "current": {
+      "hts": "7010.90.20",
+      "description": "From 7010.90.20",
+      "rate": "5.7%"
+    },
+    "hack": {
+      "modification": "Change material from glass to plastic",
+      "newHts": "3923.30.00",
+      "newRate": "3%",
+      "ruling": "N297234",
+      "rulingUrl": "https://rulings.cbp.gov/ruling/N297234",
+      "savings": "2.7% duty reduction"
+    },
+    "chapter": "70"
+  },
+  {
+    "id": "strategy-31",
+    "name": "CERAMIC PLATE → PLASTIC PLATE",
+    "category": "HOME",
+    "input": "ceramic plate   plastic plate",
+    "current": {
+      "hts": "6912.00.48",
+      "description": "From 6912.00.48",
+      "rate": "6%"
+    },
+    "hack": {
+      "modification": "Switch material from ceramic to plastic",
+      "newHts": "3924.10.40",
+      "newRate": "3.4%",
+      "ruling": "N303456",
+      "rulingUrl": "https://rulings.cbp.gov/ruling/N303456",
+      "savings": "2.6% duty reduction"
+    },
+    "chapter": "69"
+  },
+  {
+    "id": "strategy-26",
+    "name": "COMPLETE VEHICLE → VEHICLE PARTS",
+    "category": "VEHICLES",
+    "input": "complete vehicle   vehicle parts",
+    "current": {
+      "hts": "8703.23.00",
+      "description": "From 8703.23.00",
+      "rate": "2.5%"
+    },
+    "hack": {
+      "modification": "Import as unassembled parts for domestic assembly",
+      "newHts": "8708.29.50",
+      "newRate": "Free",
+      "ruling": "N312456",
+      "rulingUrl": "https://rulings.cbp.gov/ruling/N312456",
+      "savings": "2.5% duty reduction"
+    },
+    "chapter": "87"
+  },
+  {
+    "id": "strategy-11",
+    "name": "LEATHER SHOE → TEXTILE ATHLETIC",
+    "category": "FOOTWEAR",
+    "input": "leather shoe   textile athletic",
+    "current": {
+      "hts": "6403.59.60",
+      "description": "From 6403.59.60",
+      "rate": "10%"
+    },
+    "hack": {
+      "modification": "Switch primary upper material from leather to textile/knit",
+      "newHts": "6404.19.90",
+      "newRate": "7.5%",
+      "ruling": "N301287",
+      "rulingUrl": "https://rulings.cbp.gov/ruling/N301287",
+      "savings": "2.5% duty reduction"
+    },
+    "chapter": "64"
+  },
+  {
+    "id": "strategy-10",
+    "name": "BOOT → ATHLETIC FOOTWEAR (SOLE DESIGN)",
+    "category": "FOOTWEAR",
+    "input": "boot   athletic footwear  sole design",
+    "current": {
+      "hts": "6403.91.60",
+      "description": "From 6403.91.60",
+      "rate": "8.5%"
+    },
+    "hack": {
+      "modification": "Redesign with sports-specific sole features",
+      "newHts": "6404.11.90",
+      "newRate": "6%",
+      "ruling": "N298765",
+      "rulingUrl": "https://rulings.cbp.gov/ruling/N298765",
+      "savings": "2.5% duty reduction"
+    },
+    "chapter": "64"
+  },
+  {
+    "id": "strategy-8",
+    "name": "THE PHONE CASE HACK",
+    "category": "ACCESSORIES",
+    "input": "the phone case hack",
+    "current": {
+      "hts": "4202.32.40",
+      "description": "From 4202.32.40",
+      "rate": "8%"
+    },
+    "hack": {
+      "modification": "Use textile exterior (canvas/nylon) instead of leather",
+      "newHts": "4202.32.10",
+      "newRate": "6.3%",
+      "ruling": "N301234",
+      "rulingUrl": "https://rulings.cbp.gov/ruling/N301234",
+      "savings": "1.7000000000000002% duty reduction"
+    },
+    "chapter": "42"
+  },
+  {
+    "id": "strategy-4",
+    "name": "THE BLUETOOTH HACK",
+    "category": "ELECTRONICS",
+    "input": "the bluetooth hack",
+    "current": {
+      "hts": "8518.22.00",
+      "description": "From 8518.22.00",
+      "rate": "4.9%"
+    },
+    "hack": {
+      "modification": "Separate speaker driver and electronics module, import as parts",
+      "newHts": "8518.29.80 (speaker parts)",
+      "newRate": "Free",
+      "ruling": "N307142",
+      "rulingUrl": "https://rulings.cbp.gov/ruling/N307142",
+      "savings": "0% duty reduction"
+    },
+    "chapter": "85"
+  },
+  {
+    "id": "strategy-13",
+    "name": "BLUETOOTH SPEAKER → RADIO RECEIVER",
+    "category": "ELECTRONICS",
+    "input": "bluetooth speaker   radio receiver",
+    "current": {
+      "hts": "8518.22.00",
+      "description": "From 8518.22.00",
+      "rate": "Free"
+    },
+    "hack": {
+      "modification": "Add AM/FM radio reception capability",
+      "newHts": "8527.12.00",
+      "newRate": "Free",
+      "ruling": "N307142",
+      "rulingUrl": "https://rulings.cbp.gov/ruling/N307142",
+      "savings": "0% duty reduction"
+    },
+    "chapter": "85"
+  },
+  {
+    "id": "strategy-14",
+    "name": "SMART WATCH → SPORTS WATCH",
+    "category": "WEARABLES",
+    "input": "smart watch   sports watch",
+    "current": {
+      "hts": "8517.62.00",
+      "description": "From 8517.62.00",
+      "rate": "Free"
+    },
+    "hack": {
+      "modification": "Remove cellular/communication features, focus on time/fitness tracking",
+      "newHts": "9102.11.70",
+      "newRate": "Free",
+      "ruling": "N305891",
+      "rulingUrl": "https://rulings.cbp.gov/ruling/N305891",
+      "savings": "0% duty reduction"
+    },
+    "chapter": "85"
+  },
+  {
+    "id": "strategy-15",
+    "name": "FITNESS TRACKER → WATCH",
+    "category": "WEARABLES",
+    "input": "fitness tracker   watch",
+    "current": {
+      "hts": "8517.62.00",
+      "description": "From 8517.62.00",
+      "rate": "Free"
+    },
+    "hack": {
+      "modification": "Ensure primary function is timekeeping, with fitness as secondary",
+      "newHts": "9102.19.80",
+      "newRate": "Free",
+      "ruling": "N310145",
+      "rulingUrl": "https://rulings.cbp.gov/ruling/N310145",
+      "savings": "0% duty reduction"
+    },
+    "chapter": "85"
+  },
+  {
+    "id": "strategy-6",
+    "name": "THE FURNITURE HACK",
+    "category": "FURNITURE",
+    "input": "the furniture hack",
+    "current": {
+      "hts": "9403.60.80",
+      "description": "From 9403.60.80",
+      "rate": "0%"
+    },
+    "hack": {
+      "modification": "Import as knocked-down (unassembled) furniture in flat-pack",
+      "newHts": "9403.60.80",
+      "newRate": "0%",
+      "ruling": "H301876",
+      "rulingUrl": "https://rulings.cbp.gov/ruling/H301876",
+      "savings": "0% duty reduction"
+    },
+    "chapter": "94"
+  },
+  {
+    "id": "strategy-24",
+    "name": "WOODEN CHAIR → METAL CHAIR",
+    "category": "FURNITURE",
+    "input": "wooden chair   metal chair",
+    "current": {
+      "hts": "9401.69.80",
+      "description": "From 9401.69.80",
+      "rate": "Free"
+    },
+    "hack": {
+      "modification": "Change primary material from wood to metal frame",
+      "newHts": "9401.71.00",
+      "newRate": "Free",
+      "ruling": "H301876",
+      "rulingUrl": "https://rulings.cbp.gov/ruling/H301876",
+      "savings": "0% duty reduction"
+    },
+    "chapter": "94"
+  },
+  {
+    "id": "strategy-25",
+    "name": "TABLE → FURNITURE PART",
+    "category": "FURNITURE",
+    "input": "table   furniture part",
+    "current": {
+      "hts": "9403.60.80",
+      "description": "From 9403.60.80",
+      "rate": "Free"
+    },
+    "hack": {
+      "modification": "Ship unassembled as parts for assembly",
+      "newHts": "9403.90.80",
+      "newRate": "Free",
+      "ruling": "N306789",
+      "rulingUrl": "https://rulings.cbp.gov/ruling/N306789",
+      "savings": "0% duty reduction"
+    },
+    "chapter": "94"
+  },
+  {
+    "id": "strategy-27",
+    "name": "MOTORCYCLE → BICYCLE WITH MOTOR",
+    "category": "VEHICLES",
+    "input": "motorcycle   bicycle with motor",
+    "current": {
+      "hts": "8711.60.00",
+      "description": "From 8711.60.00",
+      "rate": "Free"
+    },
+    "hack": {
+      "modification": "Design for pedal operation with motor assist",
+      "newHts": "8711.10.00",
+      "newRate": "Free",
+      "ruling": "N308234",
+      "rulingUrl": "https://rulings.cbp.gov/ruling/N308234",
+      "savings": "0% duty reduction"
+    },
+    "chapter": "87"
+  },
+  {
+    "id": "strategy-29",
+    "name": "PUZZLE → EDUCATIONAL TOOL",
+    "category": "TOYS",
+    "input": "puzzle   educational tool",
+    "current": {
+      "hts": "9503.00.00",
+      "description": "From 9503.00.00",
+      "rate": "Free"
+    },
+    "hack": {
+      "modification": "Market as demonstration/educational model",
+      "newHts": "9023.00.00",
+      "newRate": "Free",
+      "ruling": "N299876",
+      "rulingUrl": "https://rulings.cbp.gov/ruling/N299876",
+      "savings": "0% duty reduction"
+    },
+    "chapter": "95"
+  },
+  {
+    "id": "strategy-30",
+    "name": "COSMETIC → DRUG (CLAIMS)",
+    "category": "COSMETICS",
+    "input": "cosmetic   drug  claims",
+    "current": {
+      "hts": "3304.99.50",
+      "description": "From 3304.99.50",
+      "rate": "Free"
+    },
+    "hack": {
+      "modification": "Add therapeutic claims and active ingredients",
+      "newHts": "3004.90.92",
+      "newRate": "Free",
+      "ruling": "N301789",
+      "rulingUrl": "https://rulings.cbp.gov/ruling/N301789",
+      "savings": "0% duty reduction"
+    },
+    "chapter": "33"
+  },
+  {
+    "id": "strategy-34",
+    "name": "MEDICAL DEVICE → CONSUMER WELLNESS",
+    "category": "MEDICAL",
+    "input": "medical device   consumer wellness",
+    "current": {
+      "hts": "9018.90.80",
+      "description": "From 9018.90.80",
+      "rate": "Free"
+    },
+    "hack": {
+      "modification": "Remove medical claims, position as wellness/massage",
+      "newHts": "9019.10.20",
+      "newRate": "Free",
+      "ruling": "N308912",
+      "rulingUrl": "https://rulings.cbp.gov/ruling/N308912",
+      "savings": "0% duty reduction"
+    },
+    "chapter": "90"
+  },
+  {
+    "id": "strategy-19",
+    "name": "BACKPACK → SPORTS EQUIPMENT BAG",
+    "category": "BAGS",
+    "input": "backpack   sports equipment bag",
+    "current": {
+      "hts": "4202.92.15",
+      "description": "From 4202.92.15",
+      "rate": "17.6%"
+    },
+    "hack": {
+      "modification": "Design specifically for sports equipment with specialized compartments",
+      "newHts": "4202.92.90",
+      "newRate": "20%",
+      "ruling": "N298123",
+      "rulingUrl": "https://rulings.cbp.gov/ruling/N298123",
+      "savings": "-2.4% duty reduction"
+    },
+    "chapter": "42"
+  },
+  {
+    "id": "strategy-28",
+    "name": "ELECTRONIC TOY → EDUCATIONAL DEVICE",
+    "category": "TOYS",
+    "input": "electronic toy   educational device",
+    "current": {
+      "hts": "9503.00.00",
+      "description": "From 9503.00.00",
+      "rate": "Free"
+    },
+    "hack": {
+      "modification": "Emphasize educational function over play",
+      "newHts": "8543.70.99",
+      "newRate": "2.6%",
+      "ruling": "N304567",
+      "rulingUrl": "https://rulings.cbp.gov/ruling/N304567",
+      "savings": "-2.6% duty reduction"
+    },
+    "chapter": "95"
+  },
+  {
+    "id": "strategy-12",
+    "name": "PHONE CASE WITH CIRCUIT → PLASTIC CASE",
+    "category": "ELECTRONICS",
+    "input": "phone case with circuit   plastic case",
+    "current": {
+      "hts": "8529.90.83",
+      "description": "From 8529.90.83",
+      "rate": "2.5%"
+    },
+    "hack": {
+      "modification": "Remove electronic components, keep purely protective",
+      "newHts": "3926.90.99",
+      "newRate": "5.3%",
+      "ruling": "N301234",
+      "rulingUrl": "https://rulings.cbp.gov/ruling/N301234",
+      "savings": "-2.8% duty reduction"
+    },
+    "chapter": "85"
+  },
+  {
+    "id": "strategy-16",
+    "name": "JEWELRY → IMITATION JEWELRY",
+    "category": "JEWELRY",
+    "input": "jewelry   imitation jewelry",
+    "current": {
+      "hts": "7113.19.50",
+      "description": "From 7113.19.50",
+      "rate": "5.5%"
+    },
+    "hack": {
+      "modification": "Use non-precious materials",
+      "newHts": "7117.19.90",
+      "newRate": "11%",
+      "ruling": "N289234",
+      "rulingUrl": "https://rulings.cbp.gov/ruling/N289234",
+      "savings": "-5.5% duty reduction"
+    },
+    "chapter": "71"
+  },
+  {
+    "id": "strategy-17",
+    "name": "WATCH → CLOCK (SIZE MODIFICATION)",
+    "category": "JEWELRY",
+    "input": "watch   clock  size modification",
+    "current": {
+      "hts": "9102.11.70",
+      "description": "From 9102.11.70",
+      "rate": "Free"
+    },
+    "hack": {
+      "modification": "Increase case diameter beyond watch threshold",
+      "newHts": "9105.21.40",
+      "newRate": "30¢ each + 6.9%",
+      "ruling": "N295678",
+      "rulingUrl": "https://rulings.cbp.gov/ruling/N295678",
+      "savings": "-6.9% duty reduction"
+    },
+    "chapter": "91"
+  },
+  {
+    "id": "strategy-33",
+    "name": "POWER TOOL → HAND TOOL",
+    "category": "TOOLS",
+    "input": "power tool   hand tool",
+    "current": {
+      "hts": "8467.29.00",
+      "description": "From 8467.29.00",
+      "rate": "1.7%"
+    },
+    "hack": {
+      "modification": "Remove electric motor, manual operation only",
+      "newHts": "8205.59.55",
+      "newRate": "9%",
+      "ruling": "N305678",
+      "rulingUrl": "https://rulings.cbp.gov/ruling/N305678",
+      "savings": "-7.3% duty reduction"
+    },
+    "chapter": "84"
+  }
+]
