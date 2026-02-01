@@ -2,33 +2,67 @@
 
 import { useState, useEffect } from 'react'
 import Terminal from '@/app/components/Terminal'
-import PresetButtons from '@/app/components/PresetButtons'
+import PresetButtons, { Preset } from '@/app/components/PresetButtons'
 import ScanAnimation, { ScanMessage } from '@/app/components/ScanAnimation'
 import Receipt from '@/app/components/Receipt'
 import LiveCounter from '@/app/components/LiveCounter'
 import ThemeToggle from '@/components/ThemeToggle'
-import presets from '@/app/data/presets.json'
 import { generateScanMessages, generateGenericScanMessages } from '@/app/lib/scanMessages'
 
 type AuditState =
   | { status: 'idle' }
   | { status: 'scanning', messages: ScanMessage[] }
-  | { status: 'complete', preset: typeof presets[0] | null, input: string }
+  | { status: 'complete', preset: Preset | null, input: string }
 
 export default function Home() {
   const [input, setInput] = useState('')
   const [auditState, setAuditState] = useState<AuditState>({ status: 'idle' })
-  const [selectedPreset, setSelectedPreset] = useState<typeof presets[0] | null>(null)
+  const [selectedPreset, setSelectedPreset] = useState<Preset | null>(null)
   const [productsAnalyzed, setProductsAnalyzed] = useState(0)
+  const [presets, setPresets] = useState<Preset[]>([])
 
   useEffect(() => {
+    // Fetch analytics
     fetch('/api/analytics')
       .then(res => res.json())
       .then(data => setProductsAnalyzed(data.totalSearches || 0))
       .catch(() => setProductsAnalyzed(0))
+
+    // Fetch strategies from database
+    fetch('/api/strategies')
+      .then(res => res.json())
+      .then(data => {
+        // Transform database strategies to preset format
+        const transformedPresets: Preset[] = data.strategies.map((strategy: any) => ({
+          id: `strategy-${strategy.id}`,
+          name: strategy.name.toUpperCase(),
+          category: strategy.category.toUpperCase(),
+          input: strategy.name.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').trim(),
+          current: {
+            hts: strategy.current_hts,
+            description: `From ${strategy.current_hts}`,
+            rate: strategy.current_rate
+          },
+          hack: {
+            modification: strategy.modification_required,
+            newHts: strategy.target_hts,
+            newRate: strategy.target_rate,
+            ruling: strategy.supporting_rulings?.[0] || 'See database',
+            rulingUrl: strategy.supporting_rulings?.[0]
+              ? `https://rulings.cbp.gov/ruling/${strategy.supporting_rulings[0]}`
+              : undefined,
+            savings: `${strategy.savings_percentage}% duty reduction`
+          },
+          perUnit: undefined,
+          atScale: undefined,
+          chapter: strategy.current_hts.substring(0, 2)
+        }))
+        setPresets(transformedPresets)
+      })
+      .catch(() => setPresets([]))
   }, [])
 
-  const handlePresetSelect = (preset: typeof presets[0]) => {
+  const handlePresetSelect = (preset: Preset) => {
     setSelectedPreset(preset)
     setInput(preset.input)
   }
@@ -119,7 +153,7 @@ export default function Home() {
         <LiveCounter />
 
         {/* PRESET BUTTONS */}
-        <PresetButtons onSelect={handlePresetSelect} />
+        <PresetButtons presets={presets} onSelect={handlePresetSelect} />
 
         {/* TERMINAL INPUT */}
         <div className="mb-12">

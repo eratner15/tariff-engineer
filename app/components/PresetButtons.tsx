@@ -1,12 +1,37 @@
 'use client'
 
-import presets from '@/app/data/presets.json'
-
-interface PresetButtonsProps {
-  onSelect: (preset: typeof presets[0]) => void
+export interface Preset {
+  id: string
+  name: string
+  category: string
+  input: string
+  current: {
+    hts: string
+    description?: string
+    rate: string
+  }
+  hack: {
+    modification: string
+    newHts: string
+    newRate: string
+    ruling: string
+    rulingUrl?: string
+    savings: string
+  }
+  perUnit?: string
+  atScale?: string
+  chapter?: string
+  implementation?: any
+  realWorld?: any
+  note?: string
 }
 
-export default function PresetButtons({ onSelect }: PresetButtonsProps) {
+interface PresetButtonsProps {
+  presets: Preset[]
+  onSelect: (preset: Preset) => void
+}
+
+export default function PresetButtons({ presets, onSelect }: PresetButtonsProps) {
   return (
     <div className="preset-buttons-container" style={{ marginBottom: '1.5rem' }}>
       <div style={{
