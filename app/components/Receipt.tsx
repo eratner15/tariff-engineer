@@ -1,10 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import presets from '@/app/data/presets.json'
+import { Preset } from '@/app/components/PresetButtons'
 
 interface ReceiptProps {
-  preset: typeof presets[0] | null
+  preset: Preset | null
   input: string
   onNewAudit: () => void
 }
