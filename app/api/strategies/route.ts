@@ -1,23 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getAllStrategies, getStrategiesForChapter } from '@/lib/db';
+import { NextResponse } from 'next/server';
+import { getAllStrategies } from '@/lib/db';
 
-export const dynamic = 'force-dynamic';
-export const runtime = 'nodejs';
-
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const searchParams = request.nextUrl.searchParams;
-    const chapter = searchParams.get('chapter');
-
-    let strategies;
-
-    if (chapter) {
-      // Get strategies for specific HTS chapter
-      strategies = await getStrategiesForChapter(chapter);
-    } else {
-      // Get all active strategies
-      strategies = await getAllStrategies();
-    }
+    // Get all active strategies
+    const strategies = await getAllStrategies();
 
     return NextResponse.json({
       strategies,
@@ -27,8 +14,10 @@ export async function GET(request: NextRequest) {
   } catch (error: any) {
     console.error('Strategies API error:', error);
     console.error('Error stack:', error.stack);
+
+    // Return error with fallback
     return NextResponse.json(
-      { error: 'Failed to fetch strategies', details: error.message },
+      { error: 'Failed to fetch strategies', details: error.message, strategies: [], count: 0 },
       { status: 500 }
     );
   }
