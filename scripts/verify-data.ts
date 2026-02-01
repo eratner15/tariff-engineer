@@ -7,6 +7,9 @@
  * Usage: npm run db:verify
  */
 
+import dotenv from 'dotenv';
+dotenv.config({ path: '.env.local' });
+
 import { getStats, searchHTSCodes, searchRulingsSemantic, getAllStrategies } from '../lib/db';
 import { createEmbedding, isEmbeddingsConfigured } from '../lib/embeddings';
 

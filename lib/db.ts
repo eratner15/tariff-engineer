@@ -1,11 +1,31 @@
 /**
  * Database Utility Library
  *
- * Provides helper functions for all database operations using Vercel Postgres.
+ * Provides helper functions for all database operations using PostgreSQL.
  * Includes connection management, query helpers, and type-safe accessors.
  */
 
-import { sql } from '@vercel/postgres';
+import dotenv from 'dotenv';
+dotenv.config({ path: '.env.local' });
+
+import { Pool } from 'pg';
+
+// Create connection pool
+const pool = new Pool({
+  connectionString: process.env.POSTGRES_URL_NON_POOLING || process.env.POSTGRES_URL,
+  ssl: { rejectUnauthorized: false }
+});
+
+// Helper function to execute queries
+async function query(text: string, params?: any[]) {
+  const client = await pool.connect();
+  try {
+    const result = await client.query(text, params);
+    return result;
+  } finally {
+    client.release();
+  }
+}
 
 // ============================================================================
 // TYPE DEFINITIONS
@@ -85,11 +105,11 @@ export interface Lead {
 /**
  * Search HTS codes by keyword
  */
-export async function searchHTSCodes(query: string, limit: number = 20) {
+export async function searchHTSCodes(searchQuery: string, limit: number = 20) {
   try {
-    const result = await sql.query(
+    const result = await query(
       'SELECT * FROM search_hts($1, $2)',
-      [query, limit]
+      [searchQuery, limit]
     );
     return result.rows as HTSCode[];
   } catch (error) {
@@ -103,7 +123,7 @@ export async function searchHTSCodes(query: string, limit: number = 20) {
  */
 export async function getHTSByCode(htsCode: string) {
   try {
-    const result = await sql.query(
+    const result = await query(
       'SELECT * FROM hts_codes WHERE hts_code = $1',
       [htsCode]
     );
@@ -136,7 +156,7 @@ export async function insertHTSCodes(codes: Partial<HTSCode>[]) {
       code.indent
     ]);
 
-    await sql.query(
+    await query(
       `INSERT INTO hts_codes (hts_code, description, general_rate, special_rate, other_rate, chapter, heading, subheading, indent)
        VALUES ${values}
        ON CONFLICT (hts_code) DO UPDATE SET
@@ -164,7 +184,7 @@ export async function searchRulingsSemantic(
   matchCount: number = 10
 ) {
   try {
-    const result = await sql.query(
+    const result = await query(
       'SELECT * FROM search_rulings_semantic($1::vector, $2, $3)',
       [JSON.stringify(queryEmbedding), matchThreshold, matchCount]
     );
@@ -180,7 +200,7 @@ export async function searchRulingsSemantic(
  */
 export async function searchRulingsByHTS(htsPrefix: string, limit: number = 20) {
   try {
-    const result = await sql.query(
+    const result = await query(
       'SELECT * FROM search_rulings_by_hts($1, $2)',
       [htsPrefix, limit]
     );
@@ -196,7 +216,7 @@ export async function searchRulingsByHTS(htsPrefix: string, limit: number = 20) 
  */
 export async function getRulingById(rulingId: string) {
   try {
-    const result = await sql.query(
+    const result = await query(
       'SELECT * FROM rulings WHERE id = $1',
       [rulingId]
     );
@@ -212,7 +232,7 @@ export async function getRulingById(rulingId: string) {
  */
 export async function upsertRuling(ruling: Partial<Ruling>) {
   try {
-    await sql.query(
+    await query(
       `INSERT INTO rulings (id, ruling_type, url, ruling_date, hts_codes, product_description, classification, rationale, keywords, embedding)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10::vector)
        ON CONFLICT (id) DO UPDATE SET
@@ -236,7 +256,7 @@ export async function upsertRuling(ruling: Partial<Ruling>) {
         ruling.classification,
         ruling.rationale,
         ruling.keywords,
-        JSON.stringify(ruling.embedding)
+        ruling.embedding ? JSON.stringify(ruling.embedding) : null
       ]
     );
   } catch (error) {
@@ -250,7 +270,7 @@ export async function upsertRuling(ruling: Partial<Ruling>) {
  */
 export async function rulingExists(rulingId: string): Promise<boolean> {
   try {
-    const result = await sql.query(
+    const result = await query(
       'SELECT id FROM rulings WHERE id = $1',
       [rulingId]
     );
@@ -270,7 +290,7 @@ export async function rulingExists(rulingId: string): Promise<boolean> {
  */
 export async function getAllStrategies() {
   try {
-    const result = await sql.query(
+    const result = await query(
       'SELECT * FROM strategies WHERE is_active = true ORDER BY savings_percentage DESC'
     );
     return result.rows as Strategy[];
@@ -285,7 +305,7 @@ export async function getAllStrategies() {
  */
 export async function getStrategiesForChapter(chapter: string) {
   try {
-    const result = await sql.query(
+    const result = await query(
       'SELECT * FROM get_strategies_for_chapter($1)',
       [chapter]
     );
@@ -301,7 +321,7 @@ export async function getStrategiesForChapter(chapter: string) {
  */
 export async function upsertStrategy(strategy: Partial<Strategy>) {
   try {
-    await sql.query(
+    await query(
       `INSERT INTO strategies (name, category, current_hts, current_rate, target_hts, target_rate, modification_required, supporting_rulings, savings_percentage, confidence, notes)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
        ON CONFLICT (name) DO UPDATE SET
@@ -344,7 +364,7 @@ export async function upsertStrategy(strategy: Partial<Strategy>) {
  */
 export async function createAudit(audit: Partial<Audit>) {
   try {
-    const result = await sql.query(
+    const result = await query(
       `INSERT INTO audits (product_description, matched_hts, matched_rulings, strategies_found, estimated_savings, user_email, ip_hash)
        VALUES ($1, $2, $3, $4, $5, $6, $7)
        RETURNING id`,
@@ -370,7 +390,7 @@ export async function createAudit(audit: Partial<Audit>) {
  */
 export async function getTotalAudits(): Promise<number> {
   try {
-    const result = await sql.query('SELECT get_total_audits() as total');
+    const result = await query('SELECT get_total_audits() as total');
     return parseInt(result.rows[0].total);
   } catch (error) {
     console.error('Error getting total audits:', error);
@@ -387,7 +407,7 @@ export async function getTotalAudits(): Promise<number> {
  */
 export async function captureLead(email: string, source: string, auditId?: string) {
   try {
-    await sql.query(
+    await query(
       `INSERT INTO leads (email, source, first_audit_id)
        VALUES ($1, $2, $3)
        ON CONFLICT (email) DO NOTHING`,
@@ -404,7 +424,7 @@ export async function captureLead(email: string, source: string, auditId?: strin
  */
 export async function getTotalLeads(): Promise<number> {
   try {
-    const result = await sql.query('SELECT COUNT(*) as total FROM leads');
+    const result = await query('SELECT COUNT(*) as total FROM leads');
     return parseInt(result.rows[0].total);
   } catch (error) {
     console.error('Error getting total leads:', error);
@@ -421,7 +441,7 @@ export async function getTotalLeads(): Promise<number> {
  */
 export async function testConnection(): Promise<boolean> {
   try {
-    await sql.query('SELECT 1');
+    await query('SELECT 1');
     return true;
   } catch (error) {
     console.error('Database connection failed:', error);
@@ -435,11 +455,11 @@ export async function testConnection(): Promise<boolean> {
 export async function getStats() {
   try {
     const [htsCount, rulingsCount, strategiesCount, auditsCount, leadsCount] = await Promise.all([
-      sql.query('SELECT COUNT(*) as count FROM hts_codes'),
-      sql.query('SELECT COUNT(*) as count FROM rulings'),
-      sql.query('SELECT COUNT(*) as count FROM strategies WHERE is_active = true'),
-      sql.query('SELECT COUNT(*) as count FROM audits'),
-      sql.query('SELECT COUNT(*) as count FROM leads'),
+      query('SELECT COUNT(*) as count FROM hts_codes'),
+      query('SELECT COUNT(*) as count FROM rulings'),
+      query('SELECT COUNT(*) as count FROM strategies WHERE is_active = true'),
+      query('SELECT COUNT(*) as count FROM audits'),
+      query('SELECT COUNT(*) as count FROM leads'),
     ]);
 
     return {

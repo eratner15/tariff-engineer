@@ -7,6 +7,9 @@
  * Usage: npm run db:seed-strategies
  */
 
+import dotenv from 'dotenv';
+dotenv.config({ path: '.env.local' });
+
 import { upsertStrategy, getStats } from '../lib/db';
 import * as fs from 'fs';
 import * as path from 'path';

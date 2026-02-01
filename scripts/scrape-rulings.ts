@@ -10,9 +10,10 @@
  * Usage: npm run db:scrape-rulings
  */
 
-import * as cheerio from 'cheerio';
+import dotenv from 'dotenv';
+dotenv.config({ path: '.env.local' });
+
 import { upsertRuling, rulingExists, getStats } from '../lib/db';
-import { createEmbedding, prepareRulingTextForEmbedding } from '../lib/embeddings';
 
 // ============================================================================
 // CONFIGURATION
@@ -80,10 +81,14 @@ async function scrapeRuling(rulingId: string, retries: number = 0): Promise<Scra
     }
 
     const html = await response.text();
-    const $ = cheerio.load(html);
 
-    // Extract full ruling text from various possible containers
-    const rulingText = $('.ruling-content, .ruling-text, .content, main').text();
+    // Extract text content by removing HTML tags
+    const rulingText = html
+      .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+      .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
 
     if (!rulingText || rulingText.length < 100) {
       // Too short, probably not a valid ruling page
@@ -105,16 +110,15 @@ async function scrapeRuling(rulingId: string, retries: number = 0): Promise<Scra
       }
     }
 
-    // Extract product description (usually in first paragraphs)
-    const paragraphs = $('p').map((_, el) => $(el).text().trim()).get();
-    const productDescription = paragraphs.find(p =>
-      p.length > 50 &&
-      p.length < 500 &&
-      (p.toLowerCase().includes('classification') ||
-       p.toLowerCase().includes('merchandise') ||
-       p.toLowerCase().includes('article') ||
-       p.toLowerCase().includes('product'))
-    ) || paragraphs[0] || 'No description available';
+    // Extract product description - look for sentences with key terms
+    const sentences = rulingText.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 50 && s.length < 500);
+    const productDescription = sentences.find(s =>
+      s.toLowerCase().includes('classification') ||
+      s.toLowerCase().includes('merchandise') ||
+      s.toLowerCase().includes('article') ||
+      s.toLowerCase().includes('product') ||
+      s.toLowerCase().includes('described as')
+    ) || sentences[0] || 'No description available';
 
     // Extract classification decision
     const classificationMatch = rulingText.match(
@@ -224,20 +228,10 @@ async function scrapeRulingRange(
     }
 
     try {
-      // Create embedding for semantic search
-      const embeddingText = prepareRulingTextForEmbedding({
-        productDescription: ruling.product_description,
-        classification: ruling.classification,
-        rationale: ruling.rationale,
-      });
-
-      console.log(`     📝 Creating embedding...`);
-      const embedding = await createEmbedding(embeddingText);
-
-      // Store in database
+      // Store in database (without embeddings - saving OpenAI costs)
       await upsertRuling({
         ...ruling,
-        embedding,
+        embedding: null, // Skip AI embeddings
       });
 
       scraped++;

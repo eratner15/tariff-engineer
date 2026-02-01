@@ -9,8 +9,10 @@
  * Usage: npm run db:load-hts
  */
 
+import dotenv from 'dotenv';
+dotenv.config({ path: '.env.local' });
+
 import { insertHTSCodes, getStats } from '../lib/db';
-import * as https from 'https';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -35,36 +37,28 @@ async function downloadHTSData(): Promise<HTSRecord[]> {
   console.log('📡 Downloading HTS data from USITC...');
   console.log(`   URL: ${HTS_DATA_URL}\n`);
 
-  return new Promise((resolve, reject) => {
-    https.get(HTS_DATA_URL, (response) => {
-      let data = '';
+  try {
+    const response = await fetch(HTS_DATA_URL);
 
-      response.on('data', (chunk) => {
-        data += chunk;
-      });
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
 
-      response.on('end', () => {
-        try {
-          const jsonData = JSON.parse(data);
-          console.log(`✅ Downloaded ${jsonData.length} HTS records\n`);
+    const jsonData = await response.json();
+    console.log(`✅ Downloaded ${jsonData.length} HTS records\n`);
 
-          // Cache the data for faster re-runs
-          const dataDir = path.dirname(CACHE_FILE);
-          if (!fs.existsSync(dataDir)) {
-            fs.mkdirSync(dataDir, { recursive: true });
-          }
-          fs.writeFileSync(CACHE_FILE, JSON.stringify(jsonData, null, 2));
-          console.log(`💾 Cached data to: ${CACHE_FILE}\n`);
+    // Cache the data for faster re-runs
+    const dataDir = path.dirname(CACHE_FILE);
+    if (!fs.existsSync(dataDir)) {
+      fs.mkdirSync(dataDir, { recursive: true });
+    }
+    fs.writeFileSync(CACHE_FILE, JSON.stringify(jsonData, null, 2));
+    console.log(`💾 Cached data to: ${CACHE_FILE}\n`);
 
-          resolve(jsonData);
-        } catch (error) {
-          reject(new Error(`Failed to parse JSON: ${error}`));
-        }
-      });
-    }).on('error', (error) => {
-      reject(new Error(`Download failed: ${error.message}`));
-    });
-  });
+    return jsonData;
+  } catch (error: any) {
+    throw new Error(`Download failed: ${error.message}`);
+  }
 }
 
 /**
