@@ -21,10 +21,13 @@ export default function Home() {
   const [selectedPreset, setSelectedPreset] = useState<Preset | null>(null)
   const [productsAnalyzed, setProductsAnalyzed] = useState(0)
 
-  // Use all 36 strategies from database export (loaded at build time)
+  // Load all strategies from database export (generated at build time from Supabase)
+  // This file contains 36 strategies total from the overnight autonomous build
   const presets = allStrategies as Preset[]
 
-  console.log(`Homepage loaded with ${presets.length} strategies`)
+  if (typeof window !== 'undefined') {
+    console.log(`Loaded ${presets.length} strategies from presets.json`)
+  }
 
   useEffect(() => {
     // Fetch analytics
