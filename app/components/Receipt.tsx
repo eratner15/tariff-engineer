@@ -65,8 +65,8 @@ LEGAL PRECEDENT: ${preset.hack.ruling}
 💰 SAVINGS UNLOCKED
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Per Unit Savings:    ${preset.perUnit}
-At Scale:            ${preset.atScale}
+${preset.perUnit ? `Per Unit Savings:    ${preset.perUnit}` : ''}
+${preset.atScale ? `At Scale:            ${preset.atScale}` : ''}
 Duty Reduction:      ${preset.hack.savings}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -87,7 +87,7 @@ Data Source: CBP CROSS Rulings Database
   }
 
   const handleShare = () => {
-    const savings = preset.atScale.split(' ')[0] // Extract just the dollar amount
+    const savings = preset.atScale ? preset.atScale.split(' ')[0] : preset.hack.savings
     const tweetText = `I just found a ${savings} tariff loophole 🐀
 
 ${preset.name}
@@ -232,14 +232,18 @@ Try it → tariffengineer.vercel.app`
           textAlign: 'center'
         }}>
           <div style={{ fontSize: '0.75rem', color: 'var(--color-muted)', marginBottom: '1rem' }}>SAVINGS UNLOCKED</div>
-          <div style={{ marginBottom: '0.5rem' }}>
-            <span style={{ color: 'var(--color-muted)' }}>PER UNIT:</span>{' '}
-            <span style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{preset.perUnit}</span>
-          </div>
-          <div style={{ marginBottom: '0.5rem' }}>
-            <span style={{ color: 'var(--color-muted)' }}>AT SCALE:</span>{' '}
-            <span style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--color-positive)' }}>{preset.atScale}</span>
-          </div>
+          {preset.perUnit && (
+            <div style={{ marginBottom: '0.5rem' }}>
+              <span style={{ color: 'var(--color-muted)' }}>PER UNIT:</span>{' '}
+              <span style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{preset.perUnit}</span>
+            </div>
+          )}
+          {preset.atScale && (
+            <div style={{ marginBottom: '0.5rem' }}>
+              <span style={{ color: 'var(--color-muted)' }}>AT SCALE:</span>{' '}
+              <span style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--color-positive)' }}>{preset.atScale}</span>
+            </div>
+          )}
           <div>
             <span style={{ color: 'var(--color-muted)' }}>DUTY REDUCTION:</span>{' '}
             <span style={{ fontWeight: 'bold' }}>{preset.hack.savings}</span>
