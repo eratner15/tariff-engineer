@@ -8,6 +8,7 @@ import Receipt from '@/app/components/Receipt'
 import LiveCounter from '@/app/components/LiveCounter'
 import ThemeToggle from '@/components/ThemeToggle'
 import { generateScanMessages, generateGenericScanMessages } from '@/app/lib/scanMessages'
+import fallbackPresets from '@/app/data/presets.json'
 
 type AuditState =
   | { status: 'idle' }
@@ -30,8 +31,18 @@ export default function Home() {
 
     // Fetch strategies from database
     fetch('/api/strategies')
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error('API not available')
+        return res.json()
+      })
       .then(data => {
+        if (!data.strategies || data.strategies.length === 0) {
+          // No strategies from API, use fallback
+          console.log('No strategies from API, using fallback presets')
+          setPresets(fallbackPresets as Preset[])
+          return
+        }
+
         // Transform database strategies to preset format
         const transformedPresets: Preset[] = data.strategies.map((strategy: any) => ({
           id: `strategy-${strategy.id}`,
@@ -57,9 +68,14 @@ export default function Home() {
           atScale: undefined,
           chapter: strategy.current_hts.substring(0, 2)
         }))
+        console.log(`Loaded ${transformedPresets.length} strategies from database`)
         setPresets(transformedPresets)
       })
-      .catch(() => setPresets([]))
+      .catch((error) => {
+        // API failed, use fallback static presets
+        console.log('Failed to load strategies from API, using fallback:', error.message)
+        setPresets(fallbackPresets as Preset[])
+      })
   }, [])
 
   const handlePresetSelect = (preset: Preset) => {
