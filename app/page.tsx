@@ -8,6 +8,7 @@ import Receipt from '@/app/components/Receipt'
 import LiveCounter from '@/app/components/LiveCounter'
 import ThemeToggle from '@/components/ThemeToggle'
 import { generateScanMessages, generateGenericScanMessages } from '@/app/lib/scanMessages'
+import allStrategies from '@/../public/strategies.json'
 import fallbackPresets from '@/app/data/presets.json'
 
 type AuditState =
@@ -20,7 +21,9 @@ export default function Home() {
   const [auditState, setAuditState] = useState<AuditState>({ status: 'idle' })
   const [selectedPreset, setSelectedPreset] = useState<Preset | null>(null)
   const [productsAnalyzed, setProductsAnalyzed] = useState(0)
-  const [presets, setPresets] = useState<Preset[]>([])
+
+  // Use all 36 strategies from static export
+  const presets = allStrategies as Preset[]
 
   useEffect(() => {
     // Fetch analytics
@@ -28,54 +31,6 @@ export default function Home() {
       .then(res => res.json())
       .then(data => setProductsAnalyzed(data.totalSearches || 0))
       .catch(() => setProductsAnalyzed(0))
-
-    // Fetch strategies from database
-    fetch('/api/strategies')
-      .then(res => {
-        if (!res.ok) throw new Error('API not available')
-        return res.json()
-      })
-      .then(data => {
-        if (!data.strategies || data.strategies.length === 0) {
-          // No strategies from API, use fallback
-          console.log('No strategies from API, using fallback presets')
-          setPresets(fallbackPresets as Preset[])
-          return
-        }
-
-        // Transform database strategies to preset format
-        const transformedPresets: Preset[] = data.strategies.map((strategy: any) => ({
-          id: `strategy-${strategy.id}`,
-          name: strategy.name.toUpperCase(),
-          category: strategy.category.toUpperCase(),
-          input: strategy.name.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').trim(),
-          current: {
-            hts: strategy.current_hts,
-            description: `From ${strategy.current_hts}`,
-            rate: strategy.current_rate
-          },
-          hack: {
-            modification: strategy.modification_required,
-            newHts: strategy.target_hts,
-            newRate: strategy.target_rate,
-            ruling: strategy.supporting_rulings?.[0] || 'See database',
-            rulingUrl: strategy.supporting_rulings?.[0]
-              ? `https://rulings.cbp.gov/ruling/${strategy.supporting_rulings[0]}`
-              : undefined,
-            savings: `${strategy.savings_percentage}% duty reduction`
-          },
-          perUnit: undefined,
-          atScale: undefined,
-          chapter: strategy.current_hts.substring(0, 2)
-        }))
-        console.log(`Loaded ${transformedPresets.length} strategies from database`)
-        setPresets(transformedPresets)
-      })
-      .catch((error) => {
-        // API failed, use fallback static presets
-        console.log('Failed to load strategies from API, using fallback:', error.message)
-        setPresets(fallbackPresets as Preset[])
-      })
   }, [])
 
   const handlePresetSelect = (preset: Preset) => {
