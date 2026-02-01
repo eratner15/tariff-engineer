@@ -41,7 +41,7 @@ export default function PresetButtons({ presets, onSelect }: PresetButtonsProps)
         textTransform: 'uppercase',
         letterSpacing: '0.1em'
       }}>
-        QUICK_RUN // FAMOUS_HACKS ({presets.length} SCENARIOS):
+        QUICK_RUN // FAMOUS_HACKS ({presets.length} SCENARIOS) [BUILD:V2]:
       </div>
       <div style={{
         display: 'grid',
