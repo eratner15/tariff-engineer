@@ -231,6 +231,7 @@ async function scrapeRulingRange(
       // Store in database (without embeddings - saving OpenAI costs)
       await upsertRuling({
         ...ruling,
+        ruling_date: ruling.ruling_date || undefined, // Convert null to undefined for TypeScript
         embedding: null, // Skip AI embeddings
       });
 
